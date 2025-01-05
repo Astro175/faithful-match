@@ -5,7 +5,19 @@ import { Button } from "./ui/button";
 import { X } from "lucide-react";
 import { useState, useEffect } from "react";
 
-const GenderOptionsModal = ({ isOpen, onClose, onSelect, selectedGender }) => {
+interface GenderOptionsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSelect: (gender: string) => void;
+  selectedGender: string | null;
+}
+
+const GenderOptionsModal: React.FC<GenderOptionsModalProps> = ({
+  isOpen,
+  onClose,
+  onSelect,
+  selectedGender,
+}) => {
   const genderOptions = [
     "Agender",
     "Androgynous",
@@ -15,7 +27,9 @@ const GenderOptionsModal = ({ isOpen, onClose, onSelect, selectedGender }) => {
   ];
 
   // Local state for modal selection
-  const [modalSelection, setModalSelection] = useState(selectedGender);
+  const [modalSelection, setModalSelection] = useState<string | null>(
+    selectedGender
+  );
 
   // Update modal selection when selectedGender prop changes
   useEffect(() => {
@@ -23,7 +37,9 @@ const GenderOptionsModal = ({ isOpen, onClose, onSelect, selectedGender }) => {
   }, [selectedGender]);
 
   const handleOK = () => {
-    onSelect(modalSelection);
+    if (modalSelection) {
+      onSelect(modalSelection);
+    }
     onClose();
   };
 

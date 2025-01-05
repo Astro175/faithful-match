@@ -11,14 +11,16 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { MdKeyboardArrowRight } from "react-icons/md";
 
-const RegistrationForm = () => {
-  const [showGenderModal, setShowGenderModal] = useState(false);
-  const [selectedGoal, setSelectedGoal] = useState("");
-  const [showGoalsModal, setShowGoalsModal] = useState(false);
-  const [showInterestsModal, setShowInterestsModal] = useState(false);
-  const [selectedGender, setSelectedGender] = useState("");
+type Gender = "Man" | "Woman" | "Agender" | "Androgynous" | "Bigender" | "Demiman" | "Demiwoman" | "";
 
-  const handleGenderSelect = (gender) => {
+const RegistrationForm = () => {
+  const [showGenderModal, setShowGenderModal] = useState<boolean>(false);
+  const [selectedGoal, setSelectedGoal] = useState<string>("");
+  const [showGoalsModal, setShowGoalsModal] = useState<boolean>(false);
+  const [showInterestsModal, setShowInterestsModal] = useState<boolean>(false);
+  const [selectedGender, setSelectedGender] = useState<Gender>("");
+
+  const handleGenderSelect = (gender: Gender) => {
     setSelectedGender(gender);
   };
 
@@ -155,13 +157,13 @@ const RegistrationForm = () => {
       <RelationshipGoalsModal
         isOpen={showGoalsModal}
         onClose={() => setShowGoalsModal(false)}
-        onSelect={(goal) => setSelectedGoal(goal)}
+        onSelect={(goal: string) => setSelectedGoal(goal)}
         selectedGoal={selectedGoal}
       />
       <InterestsModal
         isOpen={showInterestsModal}
         onClose={() => setShowInterestsModal(false)}
-        onSelect={(interests) => console.log("Selected interests:", interests)}
+        onSelect={(interests: string[]) => console.log("Selected interests:", interests)}
       />
     </main>
   );

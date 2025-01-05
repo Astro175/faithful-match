@@ -15,8 +15,12 @@ const SocialIcon = ({ Icon }: { Icon: React.ComponentType<any> }) => (
   />
 );
 
-export const Footer = () => (
-  <footer className="bg-secondary px-[5.25em] py-[5em]">
+interface FooterProps {
+  className?: string;
+}
+
+export const Footer = ({ className = "" }: FooterProps) => (
+  <footer className={`bg-secondary px-[5.25em] py-[5em] ${className}`}>
     <div className="max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between px-12 mb-8">
         <Link

@@ -5,8 +5,19 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { X } from "lucide-react";
 
-const InterestsModal = ({ isOpen, onClose, onSelect }) => {
-  const [selectedInterests, setSelectedInterests] = useState([]);
+interface InterestsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSelect: (interests: string[]) => void;
+}
+
+const InterestsModal: React.FC<InterestsModalProps> = ({
+  isOpen,
+  onClose,
+  onSelect,
+}) => {
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+
   const interests = [
     "Travel ✈️",
     "Cooking 🍳",

@@ -2,18 +2,20 @@
 
 import Image from "next/image";
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useState, ChangeEvent } from "react";
 import { X } from "lucide-react";
 
 const PhotoUpload = () => {
-  const [photos, setPhotos] = useState([]);
+  const [photos, setPhotos] = useState<string[]>([]);
 
-  const handlePhotoUpload = (e) => {
-    const file = e.target.files[0];
+  const handlePhotoUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file && photos.length < 6) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setPhotos((prev) => [...prev, e.target.result]);
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        if (e.target?.result) {
+          setPhotos((prev) => [...prev, e.target?.result as string]);
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -38,6 +40,8 @@ const PhotoUpload = () => {
                   src={photos[index]}
                   alt={`Photo ${index + 1}`}
                   className="w-full h-full object-cover rounded-lg"
+                  width={200}
+                  height={200}
                 />
                 <button
                   className="absolute -top-2 -right-2 p-1 bg-white rounded-full shadow"

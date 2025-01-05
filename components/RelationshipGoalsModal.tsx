@@ -6,19 +6,31 @@ import { Button } from "./ui/button";
 import { X } from "lucide-react";
 import { Card, CardContent } from "./ui/card";
 
-const RelationshipGoalsModal = ({
+type Goal = {
+  title: string;
+  subtitle: string;
+};
+
+interface RelationshipGoalsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSelect: (goal: string) => void;
+  selectedGoal?: string;
+}
+
+const RelationshipGoalsModal: React.FC<RelationshipGoalsModalProps> = ({
   isOpen,
   onClose,
   onSelect,
   selectedGoal: initialGoal,
 }) => {
-  const [selectedGoal, setSelectedGoal] = useState(initialGoal || "");
+  const [selectedGoal, setSelectedGoal] = useState<string>(initialGoal || "");
 
   useEffect(() => {
-    setSelectedGoal(initialGoal);
+    setSelectedGoal(initialGoal || "");
   }, [initialGoal]);
 
-  const goals = [
+  const goals: Goal[] = [
     {
       title: "Dating 👩‍❤️‍👨",
       subtitle:
