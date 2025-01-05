@@ -1,51 +1,40 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-export const Carousel = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const slides = [
-    "landing_image_one.png",
-    "landing_image_two.png",
-    "landing_image_three.png",
-  ];
+// import { useMediaQuery } from "@/hooks/useMediaQuery";
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
+interface CarouselProps {
+  slides: Array<{
+    title: string;
+    subtitle: string;
+    image: string;
+  }>;
+  activeSlide: number;
+  onSlideChange: (index: number) => void;
+}
 
+export const Carousel = ({ slides, activeSlide }: CarouselProps) => {
   return (
     <div className="absolute inset-0 -z-10">
-      {slides.map((slide, index) => (
-        <div
-          key={slide}
-          className={`absolute inset-0 transition-opacity duration-1000 ${
-            index === currentSlide ? "opacity-100" : "opacity-0"
-          }`}
+      <AnimatePresence initial={false} mode="wait">
+        <motion.div
+          key={activeSlide}
+          initial={{ x: "100%" }}
+          animate={{ x: 0 }}
+          exit={{ x: "-100%" }}
+          transition={{ type: "tween", duration: 0.5 }}
+          className="absolute inset-0"
         >
           <Image
-            src={`/${slide}`}
-            alt={`Landing image ${index + 1}`}
+            src={slides[activeSlide].image}
+            alt={slides[activeSlide].title}
             fill
             className="object-cover"
-            priority={index === 0}
+            priority={activeSlide === 0}
           />
-        </div>
-      ))}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            className={`w-3 h-3 rounded-full ${
-              index === currentSlide ? "bg-primary" : "bg-white"
-            }`}
-            onClick={() => setCurrentSlide(index)}
-          />
-        ))}
-      </div>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 };

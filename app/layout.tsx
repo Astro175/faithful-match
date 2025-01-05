@@ -1,5 +1,7 @@
 // import type { Metadata } from "next";
+"use client";
 import { Outfit } from "next/font/google";
+import { ReduxProvider } from "@/store/providers/ReduxProvider";
 
 import "./globals.css";
 
@@ -20,7 +22,7 @@ export default function RootLayout({
         className={`${outfit.variable} antialiased`}
         suppressHydrationWarning
       >
-        {children}
+        <ReduxProvider>{children}</ReduxProvider>
       </body>
     </html>
   );

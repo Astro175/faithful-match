@@ -7,6 +7,7 @@ import {
 import { FaXTwitter } from "react-icons/fa6";
 import Link from "next/link";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SocialIcon = ({ Icon }: { Icon: React.ComponentType<any> }) => (
   <Icon
     size={16}
