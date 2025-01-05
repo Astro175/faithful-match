@@ -1,15 +1,23 @@
-"use client";
-
 import { Dialog, DialogHeader, DialogContent, DialogTitle } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { X } from "lucide-react";
 import { useState, useEffect } from "react";
 
+type Gender =
+  | "Man"
+  | "Woman"
+  | "Agender"
+  | "Androgynous"
+  | "Bigender"
+  | "Demiman"
+  | "Demiwoman"
+  | "";
+
 interface GenderOptionsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (gender: string) => void;
-  selectedGender: string | null;
+  onSelect: (gender: Gender) => void; 
+  selectedGender: Gender | null; 
 }
 
 const GenderOptionsModal: React.FC<GenderOptionsModalProps> = ({
@@ -18,7 +26,7 @@ const GenderOptionsModal: React.FC<GenderOptionsModalProps> = ({
   onSelect,
   selectedGender,
 }) => {
-  const genderOptions = [
+  const genderOptions: Gender[] = [
     "Agender",
     "Androgynous",
     "Bigender",
@@ -26,12 +34,12 @@ const GenderOptionsModal: React.FC<GenderOptionsModalProps> = ({
     "Demiwoman",
   ];
 
-  // Local state for modal selection
-  const [modalSelection, setModalSelection] = useState<string | null>(
+
+  const [modalSelection, setModalSelection] = useState<Gender | null>(
     selectedGender
   );
 
-  // Update modal selection when selectedGender prop changes
+
   useEffect(() => {
     setModalSelection(selectedGender);
   }, [selectedGender]);
