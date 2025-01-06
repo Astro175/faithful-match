@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion} from "framer-motion";
+import { motion } from "framer-motion";
 import { Navbar } from "@/components/Navbar";
 import { StoreButton } from "@/components/StoreButton";
 import { Carousel } from "@/components/Carousel";
@@ -79,25 +79,14 @@ export function ClientHomepage() {
           <div className="fixed bottom-8 left-4 right-4 z-10">
             <motion.h1
               key={slides[activeSlide].title}
-              className="font-outline font-bold text-[45px] leading-tight text-white mb-2"
-              style={{
-                wordBreak: "break-word",
-                display: "-webkit-box",
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
-              }}
+              className="font-outline font-bold text-[45px] leading-tight text-white mb-2 max-w-[290px]"
             >
-              {slides[activeSlide].title.split(" ").map((word, i) => (
-                <span key={i} className="block">
-                  {word}
-                </span>
-              ))}
+              {slides[activeSlide].title}
             </motion.h1>
 
             <motion.p
               key={`subtitle-${activeSlide}`}
-              className="font-outfit font-normal text-base text-white mb-6"
+              className="font-outfit font-normal text-base text-white mb-6 max-w-[]"
             >
               {slides[activeSlide].subtitle}
             </motion.p>
@@ -126,11 +115,11 @@ export function ClientHomepage() {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center text-center px-4 py-16 md:py-32">
-            <h1 className="font-outline font-bold text-4xl md:text-6xl text-white mb-6">
+            <h1 className="font-outline font-bold text-4xl md:text-6xl text-white mb-6 mt-32 max-w-[450px]">
               {slides[activeSlide].title}
             </h1>
 
-            <p className="font-outfit font-light text-lg md:text-[1.75em] text-white mb-8 max-w-2xl">
+            <p className="font-outfit font-light text-lg md:text-[1.75em] text-white mb-8 max-w-[450px]">
               {slides[activeSlide].subtitle}
             </p>
 
