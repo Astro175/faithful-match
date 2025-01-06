@@ -14,6 +14,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { IoIosLock } from "react-icons/io";
 import { IoMail } from "react-icons/io5";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   setCredentials,
   setLoading,
@@ -35,6 +36,7 @@ interface ModalProps {
 export const SignupModal = ({ isOpen, onClose }: ModalProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
+  const router = useRouter();
   const dispatch = useDispatch();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { isLoading, error } = useSelector((state: any) => state.auth);
@@ -84,10 +86,10 @@ export const SignupModal = ({ isOpen, onClose }: ModalProps) => {
           password: data.password,
         })
       );
-
+      router.push("/home");
       onClose();
-      setShowVerifyModal(true);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       dispatch(setError(error.message));
     } finally {
@@ -100,11 +102,16 @@ export const SignupModal = ({ isOpen, onClose }: ModalProps) => {
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogOverlay className="bg-black/50" />
         <DialogContent className="bg-white rounded-md py-3 px-2 w-full max-w-md mx-auto">
-          <DialogTitle className="sr-only">
-            Create your Faithful Match account
-          </DialogTitle>
+          <DialogTitle className="sr-only">Create an account ‍👩‍💻</DialogTitle>
 
           <div className="space-y-4 px-8 py-4">
+            <h1 className="font-outfit font-semibold text-3xl">
+              Create an account ‍👩‍💻
+            </h1>
+            <p className="font-outfit text-base">
+              Create your account in seconds. We&apos;ll help you find your
+              perfect match.
+            </p>
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="mb-4">
                 <label

@@ -15,6 +15,7 @@ import {
 } from "@/store/features/authStore";
 // import { VerifyEmailModal } from "./verifyEmailModal";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 type SignupFormData = {
   email: string;
@@ -24,6 +25,7 @@ type SignupFormData = {
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
   const dispatch = useDispatch();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { isLoading, error } = useSelector((state: any) => state.auth);
@@ -73,7 +75,9 @@ export default function SignupPage() {
           password: data.password,
         })
       );
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      router.push("/home");
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       dispatch(setError(error.message));
     } finally {
