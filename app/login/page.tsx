@@ -8,6 +8,7 @@ import { IoMail } from "react-icons/io5";
 import { IoIosLock } from "react-icons/io";
 import Image from "next/image";
 import Link from "next/link";
+import { FaApple } from "react-icons/fa";
 
 export default function LoginForm() {
   const [loading, setLoading] = useState(false);
@@ -142,14 +143,8 @@ export default function LoginForm() {
           variant="outline"
           className="w-full py-6 border-[#EEEEEE] rounded-full font-outfit font-semibold"
         >
-          <Image
-            src="/facebook-icon.svg"
-            alt="Facebook"
-            className="mr-2 h-5 w-5"
-            width={20}
-            height={20}
-          />
-          Continue with Facebook
+          <FaApple className="mr-2 h-5 w-5" />
+          Continue with Apple
         </Button>
 
         <Button
