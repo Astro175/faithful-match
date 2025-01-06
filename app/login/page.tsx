@@ -7,6 +7,7 @@ import { Loader2, Eye, EyeOff } from "lucide-react";
 import { IoMail } from "react-icons/io5";
 import { IoIosLock } from "react-icons/io";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function LoginForm() {
   const [loading, setLoading] = useState(false);
@@ -16,7 +17,7 @@ export default function LoginForm() {
     password: "",
   });
 
-  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setLoading(true);
 
@@ -162,7 +163,9 @@ export default function LoginForm() {
 
         <p className="text-center">
           Don&apos;t have an account?{" "}
-          <span className="font-bold text-primary">Sign up</span>
+          <Link href="/register" className="font-bold text-primary">
+            Sign up
+          </Link>
         </p>
       </form>
     </div>
