@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -31,6 +32,7 @@ export const LoginModal = ({
   onOpenSignup,
 }: LoginModalProps) => {
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -41,6 +43,7 @@ export const LoginModal = ({
     try {
       console.log("Form submitted:", data);
       onClose();
+      router.push("/home");
     } catch (error) {
       console.error("Login error:", error);
     }

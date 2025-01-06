@@ -9,9 +9,11 @@ import { IoIosLock } from "react-icons/io";
 import Image from "next/image";
 import Link from "next/link";
 import { FaApple } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -34,9 +36,9 @@ export default function LoginForm() {
         }
       );
 
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message);
-      // Handle successful login
+      // const data = await response.json();
+      if (!response.ok) router.push("/home");
+      router.push("/home");
     } catch (error) {
       console.error("Login failed:", error);
     } finally {
