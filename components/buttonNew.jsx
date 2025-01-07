@@ -1,14 +1,7 @@
 import React from 'react';
 
-interface ButtonProps {
-  label: string; 
-  onClick?: () => void;
-  disabled?: boolean;
-  className?: string; 
-  button?: any;
-}
 
-const Button: React.FC<ButtonProps> = ({ label, onClick, disabled = false, className = '' }) => {
+const Button = ({ label, onClick, disabled = false, className = '' }) => {
   return (
     <button
       onClick={onClick}
