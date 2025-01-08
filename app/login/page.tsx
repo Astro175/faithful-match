@@ -146,7 +146,7 @@ export default function LoginForm() {
           className="w-full py-6 border-[#EEEEEE] rounded-full font-outfit font-semibold"
         >
           <FaApple className="mr-2 h-5 w-5" />
-          Continue with Apple
+          Continue with Appple
         </Button>
 
         <Button
