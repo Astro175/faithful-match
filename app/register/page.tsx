@@ -58,7 +58,7 @@ export default function SignupPage() {
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
 
       router.push("/verify-otp");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message || "Signup failed");
     } finally {
@@ -173,7 +173,7 @@ export default function SignupPage() {
             </div>
 
             {error && <p className="text-error text-sm">{error}</p>}
-
+            <div id="clerk-captcha"></div>
             <button
               type="submit"
               disabled={isLoading || !termsAccepted}

@@ -206,6 +206,7 @@ export const SignupModal = ({ isOpen, onClose }: ModalProps) => {
                 )}
 
                 {error && <p className="text-error text-sm mt-4">{error}</p>}
+                <div id="clerk-captcha"></div>
 
                 <button
                   type="submit"
