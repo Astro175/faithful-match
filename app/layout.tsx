@@ -1,7 +1,7 @@
 // import type { Metadata } from "next";
 "use client";
 import { Outfit } from "next/font/google";
-import { ReduxProvider } from "@/store/providers/ReduxProvider";
+import { ClerkProvider } from "@clerk/nextjs";
 
 import "./globals.css";
 
@@ -17,13 +17,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${outfit.variable} antialiased`}
-        suppressHydrationWarning
-      >
-        <ReduxProvider>{children}</ReduxProvider>
-      </body>
-    </html>
+    <ClerkProvider
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+    >
+      <html lang="en">
+        <body
+          className={`${outfit.variable} antialiased`}
+          suppressHydrationWarning
+        >
+          {children}
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

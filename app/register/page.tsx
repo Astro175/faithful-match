@@ -1,21 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useForm } from "react-hook-form";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { IoIosLock } from "react-icons/io";
 import { IoMail } from "react-icons/io5";
 import Link from "next/link";
-import {
-  setCredentials,
-  setLoading,
-  setError,
-} from "@/store/features/authStore";
 // import { VerifyEmailModal } from "./verifyEmailModal";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useSignUp } from "@clerk/nextjs";
 
 type SignupFormData = {
   email: string;
@@ -25,10 +20,10 @@ type SignupFormData = {
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const { signUp, isLoaded } = useSignUp();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
-  const dispatch = useDispatch();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { isLoading, error } = useSelector((state: any) => state.auth);
 
   const {
     register,
@@ -49,39 +44,25 @@ export default function SignupPage() {
   };
 
   const onSubmit = async (data: SignupFormData) => {
+    if (!isLoaded) return;
+
     try {
-      dispatch(setLoading(true));
-      dispatch(setError(null));
+      setIsLoading(true);
+      setError("");
 
-      const response = await fetch(
-        "https://faithful-match.onrender.com/api/auth/users/register",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: data.email,
-            password: data.password,
-          }),
-        }
-      );
+      await signUp.create({
+        emailAddress: data.email,
+        password: data.password,
+      });
 
-      if (!response.ok) {
-        throw new Error("Registration failed");
-      }
+      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
 
-      dispatch(
-        setCredentials({
-          email: data.email,
-          password: data.password,
-        })
-      );
-      router.push("/home");
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      dispatch(setError(error.message));
+      router.push("/verify-otp");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      setError(err.message || "Signup failed");
     } finally {
-      dispatch(setLoading(false));
+      setIsLoading(false);
     }
   };
 
