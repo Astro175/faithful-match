@@ -11,6 +11,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { X } from "lucide-react";
+import ProfileRegistrationModal from "./profileRegistrationSuccessModal";
 
 type Gender =
   | "Man"
@@ -40,6 +41,7 @@ const RegistrationForm = () => {
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [selectedGoal, setSelectedGoal] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const {
     register,
@@ -89,7 +91,7 @@ const RegistrationForm = () => {
         throw new Error("Failed to update profile");
       }
 
-      console.log("Profile updated successfully");
+      setShowSuccessModal(true);
     } catch (error) {
       console.error("Error updating profile:", error);
     } finally {
@@ -255,7 +257,7 @@ const RegistrationForm = () => {
             disabled={isSubmitting}
             className="bg-primary px-16 py-6 rounded-full font-outfit font-semibold"
           >
-            {isSubmitting ? "Updating..." : "Update Profile"}
+            {isSubmitting ? "Updating..." : "Sign Up"}
           </Button>
           <p className="font-outfit mb-8">
             Already have an account?{" "}
@@ -282,6 +284,7 @@ const RegistrationForm = () => {
         onClose={() => setShowInterestsModal(false)}
         onSelect={handleInterestSelect}
       />
+      <ProfileRegistrationModal isOpen={showSuccessModal} />
     </form>
   );
 };
