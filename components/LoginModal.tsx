@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import Image from "next/image";
+import { OAuthButtons } from "./OauthButtons";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -162,34 +162,13 @@ export const LoginModal = ({
           </form>
 
           <div className="space-y-3">
-            <button className="w-full border border-[#EEEEEE] rounded-full py-2 px-4 relative hover:bg-primary hover:text-white hover:border-primary transition-colors group">
-              <div className="absolute left-4">
-                <Image
-                  src="/google-icon.svg"
-                  alt="Google"
-                  width={24}
-                  height={24}
-                  className="group-hover:brightness-0 group-hover:invert transition-all"
-                />
-              </div>
-              <span className="font-outfit font-semibold w-full text-center">
-                Continue with Google
-              </span>
-            </button>
-            <button className="w-full border border-[#EEEEEE] rounded-full py-2 px-4 relative hover:bg-primary hover:text-white hover:border-primary transition-colors group">
-              <div className="absolute left-4">
-                <Image
-                  src="/facebook-icon.svg"
-                  alt="Facebook"
-                  width={24}
-                  height={24}
-                  className="group-hover:brightness-0 group-hover:invert transition-all"
-                />
-              </div>
-              <span className="font-outfit font-semibold w-full text-center">
-                Continue with Facebook
-              </span>
-            </button>
+            <OAuthButtons
+              variant="outline"
+              className="w-full py-6 border-[#EEEEEE] rounded-full font-outfit font-semibold"
+              onError={(error) => {
+                console.error("OAuth failed:", error);
+              }}
+            />
           </div>
 
           <div className="text-center">

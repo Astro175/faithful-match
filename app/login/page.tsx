@@ -8,7 +8,7 @@ import { IoMail } from "react-icons/io5";
 import { IoIosLock } from "react-icons/io";
 import Image from "next/image";
 import Link from "next/link";
-import { FaApple } from "react-icons/fa";
+import { OAuthButtons } from "@/components/OauthButtons";
 import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
@@ -125,29 +125,13 @@ export default function LoginForm() {
           </div>
         </div>
 
-        <Button
-          type="button"
+        <OAuthButtons
           variant="outline"
           className="w-full py-6 border-[#EEEEEE] rounded-full font-outfit font-semibold"
-        >
-          <Image
-            src="/google-icon.svg"
-            alt="Google"
-            className="mr-2 h-5 w-5"
-            width={20}
-            height={20}
-          />
-          Continue with Google
-        </Button>
-
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full py-6 border-[#EEEEEE] rounded-full font-outfit font-semibold"
-        >
-          <FaApple className="mr-2 h-5 w-5" />
-          Continue with Appple
-        </Button>
+          onError={(error) => {
+            console.error("OAuth failed:", error);
+          }}
+        />
 
         <Button
           type="submit"
