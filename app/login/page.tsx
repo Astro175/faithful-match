@@ -35,8 +35,6 @@ export default function LoginForm() {
           body: JSON.stringify(formData),
         }
       );
-
-      // const data = await response.json();
       if (!response.ok) router.push("/home");
       router.push("/home");
     } catch (error) {

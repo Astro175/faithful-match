@@ -28,11 +28,11 @@ const PhotoUpload = () => {
         Upload up to six of your best photos to make a fantastic first
         impression. Let your personality shine.
       </p>
-      <div className="grid grid-cols-3 gap-4 py-6 px-2 bg-[#FAFAFA] mt-4">
+      <div className="grid grid-cols-3 gap-4 py-6 px-2 bg-white mt-4">
         {[...Array(6)].map((_, index) => (
           <div
             key={index}
-            className="aspect-square relative bg-white rounded-lg border border-dashed border-gray-300"
+            className="aspect-square relative bg-[#FAFAFA] rounded-lg border border-dashed border-[#EEEEEE] object-center"
           >
             {photos[index] ? (
               <>
