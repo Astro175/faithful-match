@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import Image from 'next/image';
+import React, { useEffect } from "react";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import Image from "next/image";
 
 const ProfileRegistrationModal = ({ isOpen }: { isOpen: boolean }) => {
   const router = useRouter();
@@ -10,7 +10,7 @@ const ProfileRegistrationModal = ({ isOpen }: { isOpen: boolean }) => {
   useEffect(() => {
     if (isOpen) {
       const timer = setTimeout(() => {
-        router.push('/');
+        router.push("/home");
       }, 2000);
       return () => clearTimeout(timer);
     }
@@ -19,7 +19,16 @@ const ProfileRegistrationModal = ({ isOpen }: { isOpen: boolean }) => {
   return (
     <Dialog open={isOpen}>
       <DialogContent className="pt-10 px-8 pb-8 flex flex-col items-center">
-        <Image src="/complete-icon.svg" alt="Success" className="mb-4" />
+        {/* Visually Hidden Title for Accessibility */}
+        <DialogTitle className="sr-only">Sign up Successful</DialogTitle>
+
+        <Image
+          src="/complete-icon.svg"
+          alt="Success"
+          className="mb-4"
+          width={105}
+          height={105}
+        />
         <h2 className="text-primary font-semibold text-[1.5em] mb-4">
           Sign up Successful!
         </h2>

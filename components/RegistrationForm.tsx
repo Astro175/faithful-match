@@ -12,7 +12,7 @@ import { Input } from "./ui/input";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { X } from "lucide-react";
 import ProfileRegistrationModal from "./profileRegistrationSuccessModal";
-import { useAuth } from "@clerk/nextjs";
+// Removed useAuth import since we're not using backend
 
 type Gender =
   | "Man"
@@ -43,7 +43,6 @@ const RegistrationForm = () => {
   const [selectedGoal, setSelectedGoal] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const { getToken } = useAuth();
 
   const {
     register,
@@ -77,32 +76,11 @@ const RegistrationForm = () => {
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
-    try {
-      // Get the session token
-      const token = await getToken();
-
-      const response = await fetch(
-        "https://faithful-match.onrender.com/api/users/6747813a355695c0f1005b46",
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(data),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to update profile");
-      }
-
-      setShowSuccessModal(true);
-    } catch (error) {
-      console.error("Error updating profile:", error);
-    } finally {
+    setTimeout(() => {
+      console.log("Form submitted with data:", data);
       setIsSubmitting(false);
-    }
+      setShowSuccessModal(true);
+    }, 2000); 
   };
 
   return (

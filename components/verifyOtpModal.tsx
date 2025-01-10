@@ -22,6 +22,7 @@ export const VerifyOtpModal = ({
   onClose,
   onVerificationComplete,
   emailAddress,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   password,
 }: VerifyOtpModalProps) => {
   const { signUp, isLoaded } = useSignUp();
@@ -72,7 +73,18 @@ export const VerifyOtpModal = ({
       });
 
       if (completeSignUp.status === "complete") {
-        await completeSignUp.createdSessionId;
+        // Commented out backend registration for now
+        /* const cookies = document.cookie.split(";");
+        const clerkCookie = cookies.find((cookie) =>
+          cookie.trim().startsWith("__session=")
+        );
+
+        if (!clerkCookie) {
+          throw new Error("Authentication cookie not found");
+        }
+
+        const sessionCookie = clerkCookie.split("=")[1].trim();
+        console.log(sessionCookie);
 
         try {
           const response = await fetch(
@@ -81,6 +93,7 @@ export const VerifyOtpModal = ({
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${sessionCookie}`,
               },
               body: JSON.stringify({
                 email: emailAddress,
@@ -90,17 +103,20 @@ export const VerifyOtpModal = ({
           );
 
           if (!response.ok) {
+            const errorResponse = await response.json();
+            console.error("Backend error code:", response.status);
+            console.error("Backend error response:", errorResponse);
             throw new Error("Failed to register with backend");
           }
-
-          onVerificationComplete();
-          onClose();
-          router.push("/profile-registration");
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (apiError: any) {
           console.error("Backend registration error:", apiError);
           setError("Failed to complete registration. Please try again.");
-        }
+          return;
+        } */
+
+        onVerificationComplete();
+        router.push("/profile-registration");
+        onClose();
       } else {
         setError("Verification incomplete. Please try again.");
       }
