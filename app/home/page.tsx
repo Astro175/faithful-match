@@ -6,7 +6,7 @@ export default function SuccessScreen() {
   return (
     <div className="relative w-screen h-screen">
       <Image
-        src="/finding People Nearby.png"
+        src="/Finding People Nearby.png"
         alt="Finding People Nearby"
         fill
         className="object-cover"
