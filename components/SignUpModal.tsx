@@ -30,6 +30,7 @@ interface ModalProps {
 
 export const SignupModal = ({ isOpen, onClose }: ModalProps) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [password, setPassword] = useState("");
   const [showVerifyModal, setShowVerifyModal] = useState(false);
   const { signUp, isLoaded: signUpLoaded } = useSignUp();
   const { loaded: clerkLoaded } = useClerk();
@@ -65,6 +66,7 @@ export const SignupModal = ({ isOpen, onClose }: ModalProps) => {
       setIsLoading(true);
       setError("");
       setEmailAddress(data.email);
+      setPassword(data.password);
 
       const result = await signUp.create({
         emailAddress: data.email,
@@ -72,7 +74,6 @@ export const SignupModal = ({ isOpen, onClose }: ModalProps) => {
       });
 
       if (result.status === "complete") {
-        // Handle the case where no verification is needed
         onClose();
         return;
       }
@@ -226,6 +227,7 @@ export const SignupModal = ({ isOpen, onClose }: ModalProps) => {
         onClose={() => setShowVerifyModal(false)}
         onVerificationComplete={handleVerificationComplete}
         emailAddress={emailAddress}
+        password={password} 
       />
     </>
   );
