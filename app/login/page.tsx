@@ -36,7 +36,6 @@ export default function LoginForm() {
         }
       );
       if (!response.ok) router.push("/home");
-      router.push("/home");
     } catch (error) {
       console.error("Login failed:", error);
     } finally {

@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { useSignUp } from "@clerk/nextjs";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface VerifyOtpModalProps {
   isOpen: boolean;
@@ -21,9 +22,10 @@ export const VerifyOtpModal = ({
   onClose,
   onVerificationComplete,
   emailAddress,
-  password
+  password,
 }: VerifyOtpModalProps) => {
   const { signUp, isLoaded } = useSignUp();
+  const router = useRouter();
   const [verificationCode, setVerificationCode] = useState([
     "",
     "",
@@ -62,39 +64,42 @@ export const VerifyOtpModal = ({
     if (!isLoaded || !signUp) return;
     setIsLoading(true);
     setError("");
-  
+
     try {
       const code = verificationCode.join("");
       const completeSignUp = await signUp.attemptEmailAddressVerification({
         code,
       });
-  
+
       if (completeSignUp.status === "complete") {
         await completeSignUp.createdSessionId;
-        
-        // Send data to your backend using the password prop
+
         try {
-          const response = await fetch('https://faithful-match.onrender.com/api/auth/users/register', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              email: emailAddress,
-              password: password  // Use the password prop here
-            })
-          });
-  
+          const response = await fetch(
+            "https://faithful-match.onrender.com/api/auth/users/register",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                email: emailAddress,
+                password: password,
+              }),
+            }
+          );
+
           if (!response.ok) {
-            throw new Error('Failed to register with backend');
+            throw new Error("Failed to register with backend");
           }
-  
+
           onVerificationComplete();
           onClose();
+          router.push("/profile-registration");
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (apiError: any) {
-          console.error('Backend registration error:', apiError);
-          setError('Failed to complete registration. Please try again.');
+          console.error("Backend registration error:", apiError);
+          setError("Failed to complete registration. Please try again.");
         }
       } else {
         setError("Verification incomplete. Please try again.");

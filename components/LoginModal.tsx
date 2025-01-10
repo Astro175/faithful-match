@@ -13,6 +13,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { IoIosLock } from "react-icons/io";
 import { Checkbox } from "@/components/ui/checkbox";
 import { IoMail } from "react-icons/io5";
+import { useSignIn } from "@clerk/nextjs";
 
 type LoginFormData = {
   email: string;
@@ -32,7 +33,11 @@ export const LoginModal = ({
   onOpenSignup,
 }: LoginModalProps) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string>("");
   const router = useRouter();
+  const { signIn, isLoaded: isClerkLoaded } = useSignIn();
+
   const {
     register,
     handleSubmit,
@@ -40,12 +45,41 @@ export const LoginModal = ({
   } = useForm<LoginFormData>();
 
   const onSubmit = async (data: LoginFormData) => {
+    if (!isClerkLoaded || !signIn) {
+      setError("Authentication system is not ready. Please try again.");
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
+
     try {
-      console.log("Form submitted:", data);
+      // Attempt to sign in
+      await signIn.create({
+        identifier: data.email,
+        password: data.password,
+      });
+
+      // If sign in is successful (no error thrown), proceed
       onClose();
       router.push("/home");
-    } catch (error) {
-      console.error("Login error:", error);
+      router.refresh();
+    } catch (err) {
+      if (err && typeof err === "object" && "message" in err) {
+        const errorMessage = String(err.message).toLowerCase();
+        if (
+          errorMessage.includes("user not found") ||
+          errorMessage.includes("no account exists")
+        ) {
+          setError("No account found with this email. Please sign up first.");
+        } else {
+          setError(String(err.message));
+        }
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -53,6 +87,10 @@ export const LoginModal = ({
     onClose();
     onOpenSignup();
   };
+
+  if (!isClerkLoaded) {
+    return null;
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -66,6 +104,12 @@ export const LoginModal = ({
               Please enter your email & password
             </h2>
           </div>
+
+          {error && (
+            <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">
+              {error}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <div>
@@ -155,9 +199,10 @@ export const LoginModal = ({
 
             <button
               type="submit"
-              className="mt-8 w-full bg-primary text-white py-3 px-4 rounded-full font-outfit font-bold hover:bg-opacity-90 transition-colors"
+              disabled={isLoading}
+              className="mt-8 w-full bg-primary text-white py-3 px-4 rounded-full font-outfit font-bold hover:bg-opacity-90 transition-colors disabled:opacity-50"
             >
-              Login
+              {isLoading ? "Logging in..." : "Login"}
             </button>
           </form>
 
