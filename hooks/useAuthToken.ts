@@ -19,7 +19,7 @@ export const useAuthToken = () => {
         setToken(sessionToken);
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to get token');
+        setError(err instanceof Error ? err.message : "Failed to get token");
         setToken(null);
       } finally {
         setLoading(false);
@@ -29,5 +29,5 @@ export const useAuthToken = () => {
     fetchToken();
   }, [isLoaded, isSignedIn, getToken]);
 
-  return { token, loading, error, refreshToken: () => fetchToken() };
+  return { token, loading, error, refreshToken: () => getToken() };
 };
