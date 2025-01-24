@@ -5,9 +5,10 @@ import {
   DialogTitle,
   DialogOverlay,
 } from "@/components/ui/dialog";
-import { useSignUp } from "@clerk/nextjs";
+// import { useSignUp } from "@clerk/nextjs";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useSignUp, useAuth } from "@clerk/nextjs";
 
 interface VerifyOtpModalProps {
   isOpen: boolean;
@@ -22,21 +23,14 @@ export const VerifyOtpModal = ({
   onClose,
   onVerificationComplete,
   emailAddress,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   password,
 }: VerifyOtpModalProps) => {
   const { signUp, isLoaded } = useSignUp();
+  const { isSignedIn, userId } = useAuth();
   const router = useRouter();
-  const [verificationCode, setVerificationCode] = useState([
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-  ]);
+  const [verificationCode, setVerificationCode] = useState(['', '', '', '', '', '']);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const handleVerificationInput = (index: number, value: string) => {
     if (value.length > 1) return;
@@ -64,65 +58,64 @@ export const VerifyOtpModal = ({
   const handleVerifyOtp = async () => {
     if (!isLoaded || !signUp) return;
     setIsLoading(true);
-    setError("");
-
+    setError('');
+  
     try {
-      const code = verificationCode.join("");
+      const code = verificationCode.join('');
+      console.log('Attempting email verification with code:', code);
+      
       const completeSignUp = await signUp.attemptEmailAddressVerification({
         code,
       });
-
-      if (completeSignUp.status === "complete") {
-        // Commented out backend registration for now
-        /* const cookies = document.cookie.split(";");
-        const clerkCookie = cookies.find((cookie) =>
-          cookie.trim().startsWith("__session=")
-        );
-
-        if (!clerkCookie) {
-          throw new Error("Authentication cookie not found");
-        }
-
-        const sessionCookie = clerkCookie.split("=")[1].trim();
-        console.log(sessionCookie);
-
+  
+      console.log('Sign up completion status:', completeSignUp.status);
+      
+      if (completeSignUp.status === 'complete') {
         try {
           const response = await fetch(
-            "https://faithful-match.onrender.com/api/auth/users/register",
+            'https://terrier-smooth-mouse.ngrok-free.app/api/auth/users/register',
             {
-              method: "POST",
+              method: 'POST',
               headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${sessionCookie}`,
+                'Content-Type': 'application/json',
               },
               body: JSON.stringify({
                 email: emailAddress,
                 password: password,
+                clerkUserId: completeSignUp.createdUserId,
               }),
             }
           );
-
+  
+          const data = await response.json();
+          console.log('Backend response:', data);
+  
           if (!response.ok) {
-            const errorResponse = await response.json();
-            console.error("Backend error code:", response.status);
-            console.error("Backend error response:", errorResponse);
-            throw new Error("Failed to register with backend");
+            if (data.message) {
+              throw new Error(data.message);
+            } else if (data.error) {
+              throw new Error(data.error);
+            } else {
+              throw new Error(`Registration failed with status: ${response.status}`);
+            }
           }
+  
+          console.log('Registration successful:', data);
+          onVerificationComplete();
+          router.push('/profile-registration');
+          onClose();
         } catch (apiError: any) {
-          console.error("Backend registration error:", apiError);
-          setError("Failed to complete registration. Please try again.");
+          console.error('Backend registration error:', apiError);
+          setError(apiError.message || 'Failed to complete registration. Please try again.');
           return;
-        } */
-
-        onVerificationComplete();
-        router.push("/profile-registration");
-        onClose();
+        }
       } else {
-        setError("Verification incomplete. Please try again.");
+        console.log('Verification incomplete:', completeSignUp);
+        setError('Verification incomplete. Please try again.');
       }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      setError(err.message || "Verification failed. Please try again.");
+      console.error('Verification error:', err);
+      setError(err.message || 'Verification failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -134,7 +127,7 @@ export const VerifyOtpModal = ({
       await signUp.prepareEmailAddressVerification({
         strategy: "email_code",
       });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message || "Failed to resend code. Please try again.");
     }
