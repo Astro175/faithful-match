@@ -2,12 +2,12 @@
 
 import React, { useState } from 'react';
 import Image from "next/image";
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { HiChevronRight, HiChevronLeft } from 'react-icons/hi';
 import { AiOutlineLike } from "react-icons/ai";
 import { BiDislike } from "react-icons/bi";
 import { BsFire } from "react-icons/bs";
-import Fire from '@/public/reactions/fire.svg';
+// import Fire from '@/public/reactions/fire.svg';
 import Heart from '@/public/reactions/heart.svg';
 import HeartWhite from '@/public/reactions/heart-white.svg';
 import Dislike from '@/public/reactions/dislike.svg';
@@ -71,6 +71,7 @@ export function MatchCards() {
   };
 
   const handleReaction = (type: 'like' | 'dislike' | 'hot') => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setReactions(prev => ({
       like: type === 'like' ? true : false,
       dislike: type === 'dislike' ? true : false,

@@ -14,6 +14,7 @@ import { IoIosLock } from "react-icons/io";
 import { Checkbox } from "@/components/ui/checkbox";
 import { IoMail } from "react-icons/io5";
 import { useSignIn } from "@clerk/nextjs";
+import { ForgotPasswordModal } from "./ForgotPasswordModal";
 
 type LoginFormData = {
   email: string;
@@ -35,6 +36,7 @@ export const LoginModal = ({
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>("");
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const router = useRouter();
   const { signIn, isLoaded: isClerkLoaded } = useSignIn();
 
@@ -191,9 +193,10 @@ export const LoginModal = ({
               </div>
               <button
                 type="button"
-                className="text-primary hover:underline font-outfit font-semibold"
+                onClick={() => setShowForgotPassword(true)}
+                className="text-sm text-primary hover:text-primary/80 transition-colors"
               >
-                Forgot Password?
+                Forgot password?
               </button>
             </div>
 
@@ -229,6 +232,12 @@ export const LoginModal = ({
           </div>
         </div>
       </DialogContent>
+
+      <ForgotPasswordModal
+        isOpen={showForgotPassword}
+        onClose={() => setShowForgotPassword(false)}
+        onLoginClose={onClose}
+      />
     </Dialog>
   );
 };

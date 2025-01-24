@@ -8,7 +8,7 @@ import {
 // import { useSignUp } from "@clerk/nextjs";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useSignUp, useAuth } from "@clerk/nextjs";
+import { useSignUp } from "@clerk/nextjs";
 
 interface VerifyOtpModalProps {
   isOpen: boolean;
@@ -26,7 +26,7 @@ export const VerifyOtpModal = ({
   password,
 }: VerifyOtpModalProps) => {
   const { signUp, isLoaded } = useSignUp();
-  const { isSignedIn, userId } = useAuth();
+  // const { isSignedIn, userId } = useAuth();
   const router = useRouter();
   const [verificationCode, setVerificationCode] = useState(['', '', '', '', '', '']);
   const [isLoading, setIsLoading] = useState(false);
@@ -104,6 +104,7 @@ export const VerifyOtpModal = ({
           onVerificationComplete();
           router.push('/profile-registration');
           onClose();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (apiError: any) {
           console.error('Backend registration error:', apiError);
           setError(apiError.message || 'Failed to complete registration. Please try again.');
@@ -113,6 +114,7 @@ export const VerifyOtpModal = ({
         console.log('Verification incomplete:', completeSignUp);
         setError('Verification incomplete. Please try again.');
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error('Verification error:', err);
       setError(err.message || 'Verification failed. Please try again.');
