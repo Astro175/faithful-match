@@ -101,7 +101,7 @@ export const OtpVerificationModal = ({ isOpen, onClose, email }: OtpVerification
           </div>
 
           <div className="text-center">
-            <p className="text-gray-600">Didn't receive email?</p>
+            <p className="text-gray-600">Didn&apos;t receive email?</p>
             <button
               type="button"
               onClick={handleResendCode}

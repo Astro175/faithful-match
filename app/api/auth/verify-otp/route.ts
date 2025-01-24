@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   try {
-    const { code, emailAddress, password, clerkUserId } = await request.json();
+    const {  emailAddress, password, clerkUserId } = await request.json();
     
     if (!clerkUserId) {
       return NextResponse.json(
@@ -29,6 +29,7 @@ export async function POST(request: Request) {
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
     
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error('Error in verify-otp route:', error);
     return NextResponse.json(
