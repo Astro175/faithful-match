@@ -59,6 +59,9 @@ export function ClientHomepage() {
       setIsSignupModalOpen(true);
     }
   };
+  const handleOpenLogin = () => {
+    setIsLoginModalOpen(true);
+  };
 
   return (
     <main className="min-h-screen relative overflow-hidden">
@@ -164,6 +167,7 @@ export function ClientHomepage() {
               setIsLoginModalOpen(false);
               setIsSignupModalOpen(true);
             }}
+            onOpenLogin={handleOpenLogin}
           />
         </>
       )}

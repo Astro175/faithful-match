@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { OAuthButtons } from "./OauthButtons";
+import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -14,7 +15,7 @@ import { IoIosLock } from "react-icons/io";
 import { Checkbox } from "@/components/ui/checkbox";
 import { IoMail } from "react-icons/io5";
 import { useSignIn } from "@clerk/nextjs";
-import { ForgotPasswordModal } from "./ForgotPasswordModal";
+import { ForgotPasswordModal } from "./reset-password/ForgotPasswordModal";
 
 type LoginFormData = {
   email: string;
@@ -26,17 +27,20 @@ interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
   onOpenSignup: () => void;
+  onOpenLogin: () => void;
 }
 
 export const LoginModal = ({
   isOpen,
   onClose,
   onOpenSignup,
+  onOpenLogin,
 }: LoginModalProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>("");
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+
   const router = useRouter();
   const { signIn, isLoaded: isClerkLoaded } = useSignIn();
 
@@ -46,6 +50,11 @@ export const LoginModal = ({
     formState: { errors },
   } = useForm<LoginFormData>();
 
+  const handleCloseForgotPassword = useCallback(() => {
+    setIsForgotPasswordOpen(false);
+  }, []);
+
+  
   const onSubmit = async (data: LoginFormData) => {
     if (!isClerkLoaded || !signIn) {
       setError("Authentication system is not ready. Please try again.");
@@ -193,7 +202,7 @@ export const LoginModal = ({
               </div>
               <button
                 type="button"
-                onClick={() => setShowForgotPassword(true)}
+                onClick={() => setIsForgotPasswordOpen(true)}
                 className="text-sm text-primary hover:text-primary/80 transition-colors"
               >
                 Forgot password?
@@ -234,9 +243,14 @@ export const LoginModal = ({
       </DialogContent>
 
       <ForgotPasswordModal
-        isOpen={showForgotPassword}
-        onClose={() => setShowForgotPassword(false)}
+        isOpen={isForgotPasswordOpen}
+        onClose={handleCloseForgotPassword}
         onLoginClose={onClose}
+        onLoginOpen={() => {
+          handleCloseForgotPassword();
+          setIsForgotPasswordOpen(false);
+          onOpenLogin();  // Use the prop instead of setIsOpen
+        }}
       />
     </Dialog>
   );

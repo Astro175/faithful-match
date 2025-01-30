@@ -73,7 +73,7 @@ export const VerifyOtpModal = ({
       if (completeSignUp.status === 'complete') {
         try {
           const response = await fetch(
-            'https://terrier-smooth-mouse.ngrok-free.app/api/auth/users/register',
+            'http://localhost:4000/api/auth/users/register',
             {
               method: 'POST',
               headers: {
