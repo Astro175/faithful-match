@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
-import { Sidebar } from "@/components/ui/sidebar";
-import { Navbar } from "@/components/ui/Navbar";
+
 import { MatchCards } from "@/components/ui/match-card";
 
 export const metadata: Metadata = {
@@ -30,19 +29,8 @@ export const metadata: Metadata = {
   },
 };
 
+
+
 export default function HomePage() {
-  return (
-    <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
-      
-      <div className="flex-1 flex flex-col">
-        <Navbar />
-        <main className="px-8">
-          <div className="max-w-6xl mx-auto">
-            <MatchCards />
-          </div>
-        </main>
-      </div>
-    </div>
-  );
+  return <MatchCards />;
 }

@@ -22,41 +22,47 @@ import { BsBellFill } from "react-icons/bs";
 import { RiFilterFill } from "react-icons/ri";
 
 const menuItems = [
-  { 
-    inactiveIcon: RiHome6Line, 
-    activeIcon: RiHome6Fill, 
-    label: "Home", 
-    href: "/home" 
-  },
-  { 
-    inactiveIcon: PiStarFour, 
-    activeIcon: PiStarFourFill, 
-    label: "Matches", 
-    href: "/matches" 
-  },
-  { 
-    inactiveIcon: HiOutlineChatBubbleOvalLeftEllipsis, 
-    activeIcon: HiChatBubbleOvalLeftEllipsis, 
-    label: "Chats", 
-    href: "/chats" 
+  {
+    inactiveIcon: RiHome6Line,
+    activeIcon: RiHome6Fill,
+    label: "Home",
+    href: "/home",
   },
   {
-    inactiveIcon: IoPersonOutline, 
-    activeIcon: IoPerson, 
-    label: "Profile", 
-    href: "/profile"
+    inactiveIcon: PiStarFour,
+    activeIcon: PiStarFourFill,
+    label: "Matches",
+    href: "/matches",
   },
-  { 
-    inactiveIcon: GoBell, 
-    activeIcon: BsBellFill, 
-    label: "Notifications", 
-    href: "/notifications" 
+  {
+    inactiveIcon: HiOutlineChatBubbleOvalLeftEllipsis,
+    activeIcon: HiChatBubbleOvalLeftEllipsis,
+    label: "Chats",
+    href: "/chats",
   },
-  { 
-    inactiveIcon: RiFilterLine, 
-    activeIcon: RiFilterFill, 
-    label: "Filter", 
-    href: "/filter" 
+  {
+    inactiveIcon: IoPersonOutline,
+    activeIcon: IoPerson,
+    label: "Profile",
+    href: "/profile",
+  },
+  {
+    inactiveIcon: GoBell,
+    activeIcon: BsBellFill,
+    label: "Notifications",
+    href: "/notifications",
+  },
+  {
+    inactiveIcon: RiFilterLine,
+    activeIcon: RiFilterFill,
+    label: "Filter",
+    href: "/home/filter",
+  },
+  {
+    inactiveIcon: IoPersonOutline,
+    activeIcon: IoPerson,
+    label: "Settings",
+    href: "/home/settings",
   },
 ];
 
@@ -74,7 +80,7 @@ export function Sidebar() {
           className="mb-8"
         />
       </div>
-      
+
       <nav className="flex-1 space-y-4">
         {menuItems.map((item) => {
           const isActive = pathname === item.href;
@@ -86,16 +92,14 @@ export function Sidebar() {
               href={item.href}
               className={cn(
                 "flex items-center gap-4 px-6 py-3 hover:bg-gray-50",
-                isActive 
-                  ? "text-primary bg-primary/10" 
-                  : "text-[#9E9E9E]"
+                isActive ? "text-primary bg-primary/10" : "text-[#9E9E9E]"
               )}
             >
-              <Icon 
+              <Icon
                 className={cn(
                   "w-5 h-5",
                   isActive ? "text-primary font-bold" : "font-normal"
-                )} 
+                )}
               />
               <span>{item.label}</span>
             </Link>
