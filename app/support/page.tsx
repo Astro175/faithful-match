@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { IoMdMail } from "react-icons/io";
-import { Footer } from "@/components/Footer";
+import { Footer } from "@/components/Footer"; 
 
 const SupportPage = () => {
   const handleEmailClick = () => {

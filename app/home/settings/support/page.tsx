@@ -17,11 +17,11 @@ const HelpSupportPage = () => {
     },
     {
       label: "Terms & Conditions",
-      route: "/home/settings/support/terms",
+      route: "/terms",
     },
     {
       label: "Privacy Policy",
-      route: "/home/settings/support/privacy",
+      route: "/policy",
     },
     {
       label: "Feedback",
@@ -29,7 +29,7 @@ const HelpSupportPage = () => {
     },
     {
       label: "About Us",
-      route: "/home/settings/support/about",
+      route: "/about-us",
     },
   ];
 
