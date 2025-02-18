@@ -1,67 +1,82 @@
-import { create } from 'zustand';
-import { devtools, persist } from 'zustand/middleware';
-import { UserProfile } from '@/types/users';
+
+import { create } from "zustand";
+import axios from "axios";
+
+interface Attributes {
+  bio: string;
+  weight: number;
+  height: number;
+  blood_type: string;
+}
+
+interface ProfessionalDetails {
+  occupation: string;
+  languages: string[];
+}
+
+interface Lifestyle {
+  pets: string[];
+  drinking_habits: string;
+  smoking_habits: string;
+  sleeping_habits: string;
+  workout: string;
+}
+
+interface Preferences {
+  movie_prefs: string[];
+  music_prefs: string[];
+  dietary_prefs: string[];
+}
+
+interface PersonaDetails {
+  zodiac_sign: string;
+}
+
+export interface UserProfile {
+  _id: string;
+  userId: string;
+  user_name: string;
+  dob: string;
+  sex: string;
+  profile_completion_percentage: number;
+  relationship_goal: string;
+  interests: string[];
+  profile_img: string;
+  images: string[];
+  attributes: Attributes;
+  religion: string;
+  professionalDetails: ProfessionalDetails;
+  lifestyle: Lifestyle;
+  preferences: Preferences;
+  personaDetails: PersonaDetails;
+  createdAt: string;
+  updatedAt: string;
+  firstName: string;
+  lastName: string;
+}
 
 interface UserState {
   profile: UserProfile | null;
-  setUsername: (username: string) => void;
-  setDateOfBirth: (dob: string) => void;
-  setGender: (gender: string) => void;
-  setRelationshipGoals: (goals: string) => void;
-  setInterests: (interests: string[]) => void;
-  setImages: (images: string[]) => void;
-  updateProfile: (profile: Partial<UserProfile>) => void;
-  clearProfile: () => void;
+  isLoading: boolean;
+  error: string | null;
+  fetchUserProfile: (clerkId: string) => Promise<void>;
 }
 
-const useUserStore = create<UserState>()(
-  devtools(
-    persist(
-      (set) => ({
-        profile: null,
-        
-        setUsername: (username) =>
-          set((state) => ({
-            profile: { ...state.profile, username } as UserProfile,
-          })),
-          
-        setDateOfBirth: (dateOfBirth) =>
-          set((state) => ({
-            profile: { ...state.profile, dateOfBirth } as UserProfile,
-          })),
-          
-        setGender: (gender) =>
-          set((state) => ({
-            profile: { ...state.profile, gender } as UserProfile,
-          })),
-          
-        setRelationshipGoals: (relationshipGoals) =>
-          set((state) => ({
-            profile: { ...state.profile, relationshipGoals } as UserProfile,
-          })),
-          
-        setInterests: (interests) =>
-          set((state) => ({
-            profile: { ...state.profile, interests } as UserProfile,
-          })),
-          
-        setImages: (images) =>
-          set((state) => ({
-            profile: { ...state.profile, images } as UserProfile,
-          })),
-          
-        updateProfile: (partialProfile) =>
-          set((state) => ({
-            profile: { ...state.profile, ...partialProfile } as UserProfile,
-          })),
-          
-        clearProfile: () => set({ profile: null }),
-      }),
-      {
-        name: 'user-profile-storage',
-      }
-    )
-  )
-);
-
-export default useUserStore;
+export const useUserStore = create<UserState>((set) => ({
+  profile: null,
+  isLoading: false,
+  error: null,
+  fetchUserProfile: async (clerkId: string) => {
+    try {
+      set({ isLoading: true, error: null });
+      const response = await axios.get(
+        `http://localhost:4000/api/profiles/user?clerkId=${clerkId}`
+      );
+      const profileData = response.data["profile found =>"];
+      set({ profile: profileData, isLoading: false });
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      set({ error: "Failed to fetch user profile", isLoading: false });
+    }
+  },
+}));

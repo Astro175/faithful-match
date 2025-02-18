@@ -5,8 +5,12 @@ import { Button } from "@/components/ui/button";
 import { CiSearch } from "react-icons/ci";
 import { AiFillStar } from "react-icons/ai";
 import Link from "next/link";
+import { useUserStore } from "@/store/useUserStore";
+import { ProfileSkeleton } from "./ProfileSkeleton";
 
 export function Navbar() {
+  const { profile, isLoading } = useUserStore();
+
   return (
     <nav className="flex justify-between items-center px-8 py-16 bg-white border-b-2 border-[#F5F5F5] flex-row-reverse">
       <div className="flex items-center space-x-4">
@@ -19,20 +23,26 @@ export function Navbar() {
           />
         </div>
 
-        <Link href='/home/settings'>
+        <Link href="/home/settings">
           <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10 rounded-full overflow-hidden">
-              <Image
-                src="/avatar.png"
-                alt="Profile"
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div>
-              <p className="font-medium">@username</p>
-              <p className="text-sm text-gray-500">Profile</p>
-            </div>
+            {isLoading || !profile ? (
+              <ProfileSkeleton />
+            ) : (
+              <>
+                <div className="relative w-10 h-10 rounded-full overflow-hidden">
+                  <Image
+                    src={profile.profile_img || "/avatar.png"}
+                    alt="Profile"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div>
+                  <p className="font-medium">@{profile.user_name}</p>
+                  <p className="text-sm text-gray-500">Profile</p>
+                </div>
+              </>
+            )}
           </div>
         </Link>
       </div>

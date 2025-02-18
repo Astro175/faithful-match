@@ -28,9 +28,16 @@ export const VerifyOtpModal = ({
   const { signUp, isLoaded } = useSignUp();
   // const { isSignedIn, userId } = useAuth();
   const router = useRouter();
-  const [verificationCode, setVerificationCode] = useState(['', '', '', '', '', '']);
+  const [verificationCode, setVerificationCode] = useState([
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  ]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleVerificationInput = (index: number, value: string) => {
     if (value.length > 1) return;
@@ -58,66 +65,72 @@ export const VerifyOtpModal = ({
   const handleVerifyOtp = async () => {
     if (!isLoaded || !signUp) return;
     setIsLoading(true);
-    setError('');
-  
+    setError("");
+
     try {
-      const code = verificationCode.join('');
-      console.log('Attempting email verification with code:', code);
-      
+      const code = verificationCode.join("");
+      console.log("Attempting email verification with code:", code);
+
       const completeSignUp = await signUp.attemptEmailAddressVerification({
         code,
       });
-  
-      console.log('Sign up completion status:', completeSignUp.status);
-      
-      if (completeSignUp.status === 'complete') {
+
+      console.log("Sign up completion status:", completeSignUp.status);
+
+      if (completeSignUp.status === "complete") {
+        console.log(typeof completeSignUp.createdUserId);
         try {
           const response = await fetch(
-            'http://localhost:4000/api/auth/users/register',
+            "http://localhost:4000/api/auth/users/register",
             {
-              method: 'POST',
+              method: "POST",
               headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
               },
               body: JSON.stringify({
                 email: emailAddress,
                 password: password,
-                clerkUserId: completeSignUp.createdUserId,
+                clerkId: completeSignUp.createdUserId,
               }),
             }
           );
-  
+
           const data = await response.json();
-          console.log('Backend response:', data);
-  
+          console.log("Backend response:", data);
+
           if (!response.ok) {
             if (data.message) {
               throw new Error(data.message);
             } else if (data.error) {
               throw new Error(data.error);
             } else {
-              throw new Error(`Registration failed with status: ${response.status}`);
+              throw new Error(
+                `Registration failed with status: ${response.status}`
+              );
             }
           }
-  
-          console.log('Registration successful:', data);
+
+          console.log("Registration successful:", data);
           onVerificationComplete();
-          router.push('/profile-registration');
+          router.push("/profile-registration");
           onClose();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (apiError: any) {
-          console.error('Backend registration error:', apiError);
-          setError(apiError.message || 'Failed to complete registration. Please try again.');
+          console.error("Backend registration error:", apiError);
+          setError(
+            apiError.message ||
+              "Failed to complete registration. Please try again."
+          );
           return;
         }
       } else {
-        console.log('Verification incomplete:', completeSignUp);
-        setError('Verification incomplete. Please try again.');
+        console.log("Verification incomplete:", completeSignUp);
+        setError("Verification incomplete. Please try again.");
       }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      console.error('Verification error:', err);
-      setError(err.message || 'Verification failed. Please try again.');
+      console.error("Verification error:", err);
+      setError(err.message || "Verification failed. Please try again.");
     } finally {
       setIsLoading(false);
     }

@@ -1,12 +1,20 @@
 "use client";
 
 import Image from "next/image";
-import { Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { useState, ChangeEvent } from "react";
-import { X } from "lucide-react";
 
-const PhotoUpload = () => {
-  const [photos, setPhotos] = useState<string[]>([]);
+interface PhotoUploadProps {
+  onImagesChange: (files: File[]) => void;
+}
+
+interface PhotoData {
+  file: File;
+  preview: string;
+}
+
+const PhotoUpload: React.FC<PhotoUploadProps> = ({ onImagesChange }) => {
+  const [photos, setPhotos] = useState<PhotoData[]>([]);
 
   const handlePhotoUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -14,11 +22,22 @@ const PhotoUpload = () => {
       const reader = new FileReader();
       reader.onload = (e: ProgressEvent<FileReader>) => {
         if (e.target?.result) {
-          setPhotos((prev) => [...prev, e.target?.result as string]);
+          const newPhotos = [
+            ...photos,
+            { file, preview: e.target.result as string },
+          ];
+          setPhotos(newPhotos);
+          onImagesChange(newPhotos.map((p) => p.file));
         }
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const removePhoto = (index: number) => {
+    const newPhotos = photos.filter((_, i) => i !== index);
+    setPhotos(newPhotos);
+    onImagesChange(newPhotos.map((p) => p.file));
   };
 
   return (
@@ -37,7 +56,7 @@ const PhotoUpload = () => {
             {photos[index] ? (
               <>
                 <Image
-                  src={photos[index]}
+                  src={photos[index].preview}
                   alt={`Photo ${index + 1}`}
                   className="w-full h-full object-cover rounded-lg"
                   width={200}
@@ -45,9 +64,8 @@ const PhotoUpload = () => {
                 />
                 <button
                   className="absolute -top-2 -right-2 p-1 bg-white rounded-full shadow"
-                  onClick={() =>
-                    setPhotos((prev) => prev.filter((_, i) => i !== index))
-                  }
+                  onClick={() => removePhoto(index)}
+                  type="button"
                 >
                   <X size={16} />
                 </button>
