@@ -13,7 +13,12 @@ import { FormData } from "../types";
 import RelationshipGoalsModal from "@/components/RelationshipGoalsModal";
 import InterestsModal from "@/components/InterestsModal";
 import ReligionModal from "@/components/ReligionModal";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../../ui/dialog";
 import { useToast } from "../../ui/toast";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";

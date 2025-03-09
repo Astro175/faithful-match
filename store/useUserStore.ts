@@ -60,12 +60,14 @@ interface UserState {
   isLoading: boolean;
   error: string | null;
   fetchUserProfile: (clerkId: string) => Promise<void>;
+  setProfile: (profile: UserProfile | null) => void;
 }
 
 export const useUserStore = create<UserState>((set) => ({
   profile: null,
   isLoading: false,
   error: null,
+  setProfile: (profile) => set({ profile }),
   fetchUserProfile: async (clerkId: string) => {
     try {
       set({ isLoading: true, error: null });

@@ -1,8 +1,11 @@
+// app/layout.tsx
 import { Outfit } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "sonner";
 import "./globals.css";
 import { cookies } from "next/headers";
+import { DeviceProvider } from "@/components/ui/providers/device-provider";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -12,19 +15,16 @@ const outfit = Outfit({
 
 export default async function RootLayout({
   children,
-  mobile,
-  desktop,
 }: {
   children: React.ReactNode;
-  mobile: React.ReactNode;
-  desktop: React.ReactNode;
 }) {
   // Server-side detection from middleware cookies
   const cookieStore = await cookies();
-  const deviceType = cookieStore.get("device-type")?.value || "desktop"; // Default to desktop
+  const deviceType = cookieStore.get("device-type")?.value || "desktop";
+  const serverIsMobile = deviceType === "mobile";
 
   return (
-    <html lang="en" suppressHydrationWarning data-device={deviceType}>
+    <html lang="en" suppressHydrationWarning>
       <body className={`${outfit.variable} antialiased`}>
         <ThemeProvider
           attribute="class"
@@ -35,13 +35,10 @@ export default async function RootLayout({
           <ClerkProvider
             publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
           >
-            {/* Children includes our ClientRedirect component */}
-            {children}
-
-            {/* Render content based on device type */}
-            <div id="device-content">
-              {deviceType === "mobile" ? mobile : desktop}
-            </div>
+            <DeviceProvider serverIsMobile={serverIsMobile}>
+              {children}
+              <Toaster position="top-center" richColors closeButton />
+            </DeviceProvider>
           </ClerkProvider>
         </ThemeProvider>
       </body>

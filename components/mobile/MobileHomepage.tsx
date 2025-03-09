@@ -40,11 +40,11 @@ export function MobileHomepage() {
   }, [slides.length]);
 
   const handleContinue = () => {
-    router.push("/login");
+    router.push("/onboarding");
   };
 
   const handleLogin = () => {
-    router.push("/login");
+    router.push("/onboarding");
   };
 
   return (

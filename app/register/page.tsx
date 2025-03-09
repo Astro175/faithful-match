@@ -7,7 +7,6 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { IoIosLock } from "react-icons/io";
 import { IoMail } from "react-icons/io5";
 import Link from "next/link";
-// import { VerifyEmailModal } from "./verifyEmailModal";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSignUp } from "@clerk/nextjs";
@@ -166,7 +165,7 @@ export default function SignupPage() {
                 className="font-outfit text-sm md:text-base"
               >
                 I agree to Faithful Match{" "}
-                <Link href="/privacy" className="text-primary hover:underline">
+                <Link href="/terms" className="text-primary hover:underline">
                   Privacy Policy
                 </Link>
               </label>
@@ -194,11 +193,6 @@ export default function SignupPage() {
           </p>
         </div>
       </div>
-
-      {/* <VerifyEmailModal
-        isOpen={showVerifyModal}
-        onClose={() => setShowVerifyModal(false)}
-      /> */}
     </div>
   );
 }
