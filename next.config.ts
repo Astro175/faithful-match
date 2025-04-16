@@ -1,6 +1,4 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+const nextConfig = {
   images: {
     remotePatterns: [
       {
@@ -13,7 +11,15 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "images.unsplash.com", // Add Unsplash here
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "source.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "loremflickr.com",
       },
     ],
   },

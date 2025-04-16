@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button";
 import { CiSearch } from "react-icons/ci";
 import { AiFillStar } from "react-icons/ai";
 import Link from "next/link";
-import { useUserStore } from "@/store/useUserStore";
+import { useUserProfile } from "@/hooks/useUserProfile";
+import { useClerk } from "@clerk/nextjs";
 import { ProfileSkeleton } from "./ProfileSkeleton";
 
 export function Navbar() {
-  const { profile, isLoading } = useUserStore();
+  const { user } = useClerk();
+  const { data: profile } = useUserProfile(user?.id);
 
   return (
     <nav className="flex justify-between items-center px-8 py-16 bg-white border-b-2 border-[#F5F5F5] flex-row-reverse">
@@ -25,7 +27,7 @@ export function Navbar() {
 
         <Link href="/home/settings">
           <div className="flex items-center gap-3">
-            {isLoading || !profile ? (
+            {!profile ? (
               <ProfileSkeleton />
             ) : (
               <>

@@ -1,11 +1,9 @@
-// app/layout.tsx
 import { Outfit } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
 import "./globals.css";
-import { cookies } from "next/headers";
-import { DeviceProvider } from "@/components/ui/providers/device-provider";
+import ReactQueryProvider from "@/components/ui/providers/providers";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -13,16 +11,11 @@ const outfit = Outfit({
   weight: ["400", "500", "600", "700"],
 });
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Server-side detection from middleware cookies
-  const cookieStore = await cookies();
-  const deviceType = cookieStore.get("device-type")?.value || "desktop";
-  const serverIsMobile = deviceType === "mobile";
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${outfit.variable} antialiased`}>
@@ -35,10 +28,8 @@ export default async function RootLayout({
           <ClerkProvider
             publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
           >
-            <DeviceProvider serverIsMobile={serverIsMobile}>
-              {children}
-              <Toaster position="top-center" richColors closeButton />
-            </DeviceProvider>
+            <ReactQueryProvider>{children}</ReactQueryProvider>
+            <Toaster position="top-center" richColors closeButton />
           </ClerkProvider>
         </ThemeProvider>
       </body>

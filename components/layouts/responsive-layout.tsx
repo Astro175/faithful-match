@@ -5,13 +5,15 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 interface ResponsiveLayoutProps {
-  mobileComponent: React.ReactNode;
-  desktopComponent: React.ReactNode;
+  children: React.ReactNode;
+  desktop: React.ReactNode;
+  mobile: React.ReactNode;
 }
 
 export function ResponsiveLayout({
-  mobileComponent,
-  desktopComponent,
+  children,
+  desktop,
+  mobile,
 }: ResponsiveLayoutProps) {
   const { isMobile } = useDeviceStore();
   const [mounted, setMounted] = useState(false);
@@ -37,7 +39,7 @@ export function ResponsiveLayout({
           transition={{ duration: 0.3 }}
           className="w-full h-full"
         >
-          {mobileComponent}
+          {mobile}
         </motion.div>
       ) : (
         <motion.div
@@ -48,7 +50,7 @@ export function ResponsiveLayout({
           transition={{ duration: 0.3 }}
           className="w-full h-full"
         >
-          {desktopComponent}
+          {desktop}
         </motion.div>
       )}
     </AnimatePresence>
