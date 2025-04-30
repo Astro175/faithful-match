@@ -13,7 +13,7 @@ export async function getUserProfile() {
       `http://localhost:4000/api/profiles/user?clerkId=${userId}`,
       {
         next: {
-          revalidate: 3600, // Cache for 1 hour
+          revalidate: 3600, 
         },
       }
     );

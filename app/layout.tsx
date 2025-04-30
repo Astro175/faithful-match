@@ -1,5 +1,6 @@
 import { Outfit } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
+import {
+  ClerkProvider } from '@clerk/nextjs'
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
 import "./globals.css";
@@ -28,7 +29,9 @@ export default function RootLayout({
           <ClerkProvider
             publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
           >
-            <ReactQueryProvider>{children}</ReactQueryProvider>
+            <ReactQueryProvider>
+              {children}
+            </ReactQueryProvider>
             <Toaster position="top-center" richColors closeButton />
           </ClerkProvider>
         </ThemeProvider>

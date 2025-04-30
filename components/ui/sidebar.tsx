@@ -41,7 +41,7 @@ const menuItems = [
     inactiveIcon: HiOutlineChatBubbleOvalLeftEllipsis,
     activeIcon: HiChatBubbleOvalLeftEllipsis,
     label: "Chats",
-    href: "/chats",
+    href: "/home/chat",
   },
   {
     inactiveIcon: IoPersonOutline,

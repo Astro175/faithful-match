@@ -1,11 +1,11 @@
 import { UserStoreInitializer } from "@/components/client/UserStoreInitializer";
-import { Providers } from "@/components/ui/providers/providers";
+
 import { MobileBottomNav } from "@/components/mobile/MobileBottomNav";
 import {
   NotificationButtonClient,
   FilterButtonClient,
 } from "@/components/mobile/match/HeaderClient";
-import { getUserProfile } from "@/lib/getUserProfile"; // New utility
+import { getUserProfile } from "@/lib/api/getUserProfile";
 
 export default async function MobileHomeLayout({
   children,
@@ -15,7 +15,7 @@ export default async function MobileHomeLayout({
   const profileData = await getUserProfile();
 
   return (
-    <Providers>
+    <div>
       <UserStoreInitializer profile={profileData} />
       <div className="flex flex-col min-h-screen bg-white">
         <header className="sticky top-0 bg-white z-10 py-4 px-6 flex justify-between items-center border-b flex-row-reverse">
@@ -32,7 +32,7 @@ export default async function MobileHomeLayout({
         <main className="flex-1 px-4">{children}</main>
         <MobileBottomNav />
       </div>
-    </Providers>
+    </div>
   );
 }
 

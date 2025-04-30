@@ -1,7 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { StoreButton } from "../StoreButton";
 
 interface MobileNavbarProps {
   onLogin: () => void;
@@ -102,13 +101,6 @@ export const MobileNavbar = ({
             className="fixed inset-0 bg-black/95 pt-24 px-6"
           >
             <div className="flex flex-col items-center gap-8">
-              <Link
-                href="/pricing"
-                className="font-outline font-bold text-2xl text-white hover:text-primary transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Pricing
-              </Link>
               <button
                 onClick={() => {
                   onLogin();
@@ -120,8 +112,6 @@ export const MobileNavbar = ({
               </button>
 
               <div className="mt-8 flex flex-col gap-4 w-full max-w-xs">
-                <StoreButton type="apple" />
-                <StoreButton type="android" />
               </div>
             </div>
           </motion.div>
