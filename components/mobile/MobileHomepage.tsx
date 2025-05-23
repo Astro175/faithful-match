@@ -65,7 +65,7 @@ export function MobileHomepage() {
         <div className="fixed bottom-8 left-4 right-4 z-10">
           <motion.h1
             key={slides[activeSlide].title}
-            className="font-outline font-bold text-[45px] leading-tight text-white mb-2 max-w-[290px] text-center"
+            className="font-outline font-bold text-[45px] leading-tight text-white mb-2 max-w-[290px] text-left"
           >
             {slides[activeSlide].title}
           </motion.h1>

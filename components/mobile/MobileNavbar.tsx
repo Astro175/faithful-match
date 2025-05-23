@@ -45,7 +45,7 @@ export const MobileNavbar = ({
 }: MobileNavbarProps) => {
   return (
     <nav className="absolute top-0 left-0 right-0 z-20">
-      <div className="px-4 py-6">
+      <div className="px-2">
         <div className="flex justify-between items-center">
           <Logo />
 
@@ -101,6 +101,13 @@ export const MobileNavbar = ({
             className="fixed inset-0 bg-black/95 pt-24 px-6"
           >
             <div className="flex flex-col items-center gap-8">
+              <Link
+                href="/pricing"
+                className="font-outline font-bold text-2xl text-white hover:text-primary transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Pricing
+              </Link>
               <button
                 onClick={() => {
                   onLogin();
