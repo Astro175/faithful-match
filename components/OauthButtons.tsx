@@ -1,101 +1,88 @@
+"use client";
+
 import { useSignIn } from "@clerk/nextjs";
+import { OAuthStrategy } from "@clerk/types";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "./ui/button";
 import Image from "next/image";
-import { FaApple } from "react-icons/fa";
 import { Loader2 } from "lucide-react";
-import { ButtonProps } from "@/components/ui/button";
+import { FaApple } from "react-icons/fa";
+import { useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/router";
 
-interface OAuthButtonsProps {
-  variant?: ButtonProps["variant"];
-  className?: string;
-  onSuccess?: () => void;
-  onError?: (error: unknown) => void;
-}
+const providers = [
+  {
+    name: "Google",
+    strategy: "oauth_google" as const,
+    icon: (
+      <Image
+        src="./google-icon.svg"
+        alt="Google"
+        width={20}
+        height={20}
+        className="mr-2 h-5 w-5"
+      />
+    ),
+  },
+  {
+    name: "Apple",
+    strategy: "oauth_apple" as const,
+    icon: <FaApple className="mr-2 h-5 w-5" />,
+  },
+];
 
-export const OAuthButtons = ({
+export default function OAuthButtons({
   variant = "default",
   className = "",
-  onSuccess,
-  onError,
-}: OAuthButtonsProps) => {
+}: {
+  variant?: Parameters<typeof Button>[0]["variant"];
+  className?: string;
+}) {
+  const router = useRouter()
   const { signIn, isLoaded } = useSignIn();
-  const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
-  const [isLoadingApple, setIsLoadingApple] = useState(false);
+  const {isSignedIn} = useAuth()
+  const [loading, setLoading] = useState<string | null>(null);
 
-  const handleGoogleSignIn = async () => {
-    if (!isLoaded) return;
+  const handleSignIn = async (strategy: OAuthStrategy) => {
+
+    if (isSignedIn) {
+      router.push("/app");
+      return;
+    }
+    if (!isLoaded) {
+      return;
+    }
+
+    setLoading(strategy);
     try {
-      setIsLoadingGoogle(true);
       await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: "/sso-callback",
-        redirectUrlComplete: "/home",
+        redirectUrlComplete: "/app",
       });
-      onSuccess?.();
     } catch (error) {
-      console.error("OAuth error:", error);
-      onError?.(error);
-    } finally {
-      setIsLoadingGoogle(false);
+      console.log("Oauth error:", error);
     }
   };
-
-  const handleAppleSignIn = async () => {
-    if (!isLoaded) return;
-    try {
-      setIsLoadingApple(true);
-      await signIn.authenticateWithRedirect({
-        strategy: "oauth_apple",
-        redirectUrl: "/sso-callback",
-        redirectUrlComplete: "/home",
-      });
-      onSuccess?.();
-    } catch (error) {
-      console.error("OAuth error:", error);
-      onError?.(error);
-    } finally {
-      setIsLoadingApple(false);
-    }
-  };
-
   return (
     <>
-      <Button
-        type="button"
-        variant={variant}
-        className={className}
-        onClick={handleGoogleSignIn}
-        disabled={!isLoaded || isLoadingGoogle}
-      >
-        {isLoadingGoogle ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          <Image
-            src="/google-icon.svg"
-            alt="Google"
-            className="mr-2 h-5 w-5"
-            width={20}
-            height={20}
-          />
-        )}
-        Continue with Google
-      </Button>
-
-      <Button
-        type="button"
-        variant={variant}
-        className={className}
-        onClick={handleAppleSignIn}
-        disabled={!isLoaded || isLoadingApple}
-      >
-        {isLoadingApple ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          <FaApple className="mr-2 h-5 w-5" />
-        )}
-        Continue with Apple
-      </Button>
+      {providers.map(({ name, strategy, icon }) => (
+        <Button
+          key={strategy}
+          type="button"
+          variant={variant}
+          className={className}
+          onClick={() => handleSignIn(strategy)}
+          disabled={!isLoaded || loading === strategy}
+        >
+          {loading === strategy ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            icon
+          )}
+          Continue with {name}
+        </Button>
+      ))}
     </>
   );
-};
+}

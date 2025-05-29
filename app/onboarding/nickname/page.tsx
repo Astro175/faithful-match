@@ -5,17 +5,13 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { OnboardingLayout } from "@/components/ui/onboardingLayout";
-import { useOnboardingStore } from "@/store/onboarding-store";
 import { motion } from "framer-motion";
 
 export default function NicknamePage() {
   const router = useRouter();
-  const { nickname, setNickname } = useOnboardingStore();
-  const [localNickname, setLocalNickname] = useState(nickname);
 
   const handleContinue = () => {
     if (localNickname.trim()) {
-      setNickname(localNickname);
       router.push("/onboarding/birthdate");
     }
   };

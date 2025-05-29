@@ -36,7 +36,7 @@ export const patchWithParams = async <T>(
 };
 
 export const userProfileService = {
-  async create(data: Profile, clerkId: string): Promise<Profile> {
+  async create(data: Partial<Profile>, clerkId: string): Promise<Profile> {
     try {
       const res = await axios.post(`${baseUrl}/api/profiles/`, data, {
         params: {

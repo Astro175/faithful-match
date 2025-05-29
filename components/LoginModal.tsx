@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { OAuthButtons } from "./OauthButtons";
+import OAuthButtons from "./OauthButtons";
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -222,9 +222,6 @@ export const LoginModal = ({
             <OAuthButtons
               variant="outline"
               className="w-full py-6 border-[#EEEEEE] rounded-full font-outfit font-semibold"
-              onError={(error) => {
-                console.error("OAuth failed:", error);
-              }}
             />
           </div>
 

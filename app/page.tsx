@@ -1,5 +1,11 @@
-import DesktopHome from "./@desktop/page";
-import MobileHome from "./@mobile/page";
+import dynamic from "next/dynamic";
+
+const DesktopHome = dynamic(() => import("./@desktop/page"), {
+  loading: () => <div>Loading</div>,
+});
+const MobileHome = dynamic(() => import("./@mobile/page"), {
+  loading: () => <div>Loading...</div>,
+});
 
 export default function HomePage() {
   return (
