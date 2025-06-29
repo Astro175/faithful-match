@@ -1,20 +1,17 @@
-import { RadarAnimation } from "@/components/ui/RadarAnimation";
+import Image from "next/image";
+import { Loader2 } from "lucide-react";
 
-export default function Loading() {
+export default function LoadingPage() {
   return (
-    <div className="flex flex-col items-center justify-center h-[700px] w-full bg-red-50">
-      <div className="bg-gradient-to-r from-red-500/10 via-red-600/20 to-red-500/10 w-full h-full flex flex-col items-center justify-center space-y-8 animate-pulse">
-        <RadarAnimation />
-        
-        <h2 className="text-2xl font-semibold text-red-600 mt-8 tracking-wide">
-          Finding people near you
-          <span className="inline-flex">
-            <span className="animate-bounce">.</span>
-            <span className="animate-bounce delay-100">.</span>
-            <span className="animate-bounce delay-200">.</span>
-          </span>
-        </h2>
-      </div>
+    <div className="flex items-center justify-center">
+      <Image
+        src="/public/logo-red.png"
+        width={220}
+        height={220}
+        alt="Faithful Match Logo"
+        className="w-52 h-52 animate-pulse"
+      />
+      <Loader2 className="h-8 w-8 animate-spin"/>
     </div>
   );
 }

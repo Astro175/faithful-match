@@ -11,7 +11,7 @@ export enum Visibility {
 
 export type Profile = {
   userId: string;
-  user_name: string;
+  userName: string;
   firstName?: string;
   lastName?: string;
   dob?: string;
@@ -20,9 +20,9 @@ export type Profile = {
     latitude: number;
   };
   sex: Sex;
-  relationship_goal: string;
+  relationshipGoal: string;
   interests: string[];
-  profile_img?: string;
+  profileImg?: string;
   images: {
     url: string;
     id: string;
@@ -31,30 +31,30 @@ export type Profile = {
     bio?: string;
     weight?: number;
     height?: number;
-    blood_type?: string;
+    bloodType?: string;
   };
   religion?: string;
   professionalDetails?: {
     occupation?: string;
-    current_company?: string;
+    currentCompany?: string;
     school?: string;
-    degree_type?: string;
+    degreeType?: string;
     languages?: string[];
   };
   lifestyle?: {
     pets?: string[];
-    drinking_habits?: string;
-    smoking_habits?: string;
-    sleeping_habit?: string;
+    drinkingHabits?: string;
+    smokingHabits?: string;
+    sleepingHabit?: string;
     workout?: string;
-    social_media_presence?: string;
+    socialMediaPresence?: string;
   };
   preferences?: {
-    movie_prefs?: string[];
-    music_prefs?: string[];
-    travel_prefs?: string[];
-    dietary_prefs?: string[];
-    book_prefs?: string[];
+    moviePrefs?: string[];
+    musicPrefs?: string[];
+    travelPrefs?: string[];
+    dietaryPrefs?: string[];
+    bookPrefs?: string[];
   };
   filterPreferences?: {
     minAge?: number;
@@ -66,15 +66,15 @@ export type Profile = {
     fallback?: boolean;
   };
   personaDetails?: {
-    zodiac_sign?: string;
-    personality_type?: string;
-    communication_style?: string;
-    family_plans?: string;
+    zodiacSign?: string;
+    personalityType?: string;
+    communicationStyle?: string;
+    familyPlans?: string;
     genotype?: string;
   };
-  profile_completion_percentage?: number;
+  profileCompletionPercentage?: number;
   lastUserNameChange?: string;
   visibility?: Visibility;
   blockedContacts: string[];
   distance?: number;
-}
+};

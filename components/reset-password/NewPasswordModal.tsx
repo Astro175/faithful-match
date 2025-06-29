@@ -1,4 +1,5 @@
-import { useState, useCallback, useEffect } from "react";
+"use client";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -6,10 +7,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
-import { useSignIn } from "@clerk/nextjs";
 import SuccessModal from "./SuccessModal";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import zxcvbn from "zxcvbn";
+// import { supabase } from "@/lib/supabaseClient";
 
 interface NewPasswordModalProps {
   isOpen: boolean;
@@ -42,7 +43,6 @@ export const NewPasswordModal = ({
   onClose,
   code,
   email,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onSuccess,
   onOpenLogin,
 }: NewPasswordModalProps) => {
@@ -53,13 +53,13 @@ export const NewPasswordModal = ({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [requirementsMet, setRequirementsMet] = useState<boolean[]>([]);
-  const { signIn } = useSignIn();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
+    reset,
   } = useForm<{ newPassword: string; confirmPassword: string }>();
 
   const newPassword = watch("newPassword", "");
@@ -93,7 +93,6 @@ export const NewPasswordModal = ({
         setError("Passwords do not match");
         return;
       }
-
       if (requirementsMet.includes(false)) {
         setError("Password does not meet all requirements");
         return;
@@ -101,36 +100,24 @@ export const NewPasswordModal = ({
 
       setIsLoading(true);
       setError("");
-
       try {
-        if (!signIn) throw new Error("Sign-in process not initialized");
+        // TODO: use Supabase to update password with OTP code
+        // await supabase.auth.verifyOtp({
+        //   email,
+        //   token: code,
+        //   type: 'signup' /* or relevant type */
+        // });
+        // await supabase.auth.updateUser({ password: data.newPassword });
 
-        const result = await signIn.attemptFirstFactor({
-          strategy: "reset_password_email_code",
-          code: code,
-          password: data.newPassword,
-        });
-
-        if (result.status === "needs_second_factor") {
-          setError("2FA is required, but this UI does not handle that");
-        } else if (result.status === "complete") {
-          setShowSuccessModal(true);
-          onClose();
-        } else {
-          setError("Something went wrong. Please try again.");
-        }
-      } catch (err) {
-        const clerkError = err as import("@clerk/nextjs").ClerkAPIResponse;
-        console.error("Password reset error:", clerkError);
-        setError(
-          clerkError?.errors?.[0]?.longMessage ||
-            "Failed to reset password. Please try again."
-        );
+        setShowSuccessModal(true);
+        onClose();
+      } catch (err: any) {
+        setError(err.message || "Failed to reset password. Please try again.");
       } finally {
         setIsLoading(false);
       }
     },
-    [code, signIn, onClose, requirementsMet]
+    [code, email, onClose, requirementsMet]
   );
 
   return (
@@ -146,8 +133,9 @@ export const NewPasswordModal = ({
                 Create your new password 🔒
               </h2>
               <p className="text-gray-600 mt-2">
-                Create your new password for {email}. If you forget it, you&apos;ll
-                need to reset it again.
+                Create a new password for{" "}
+                <span className="font-semibold">{email}</span>. If forgotten,
+                you’ll need to reset again.
               </p>
             </div>
 
@@ -158,7 +146,6 @@ export const NewPasswordModal = ({
             )}
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              {/* Password Strength Section */}
               <div className="space-y-2">
                 <div className="flex gap-1 h-1.5">
                   {[...Array(4)].map((_, i) => (
@@ -182,7 +169,6 @@ export const NewPasswordModal = ({
                 </p>
               </div>
 
-              {/* Password Requirements */}
               <div className="space-y-2">
                 {passwordRequirements.map((req, i) => (
                   <div key={req.label} className="flex items-center gap-2">
@@ -204,17 +190,13 @@ export const NewPasswordModal = ({
                 ))}
               </div>
 
-              {/* New Password Input */}
               <div className="relative">
                 <input
                   type={showNewPassword ? "text" : "password"}
                   id="newPassword"
                   {...register("newPassword", {
                     required: "New password is required",
-                    minLength: {
-                      value: 8,
-                      message: "Password must be at least 8 characters",
-                    },
+                    minLength: { value: 8, message: "At least 8 characters" },
                   })}
                   className="w-full bg-[#FAFAFA] border border-[#FAFAFA] py-4 px-4 rounded-md focus:outline-none focus:border-primary pr-12"
                   placeholder="New Password"
@@ -238,16 +220,14 @@ export const NewPasswordModal = ({
                 )}
               </div>
 
-              {/* Confirm Password Input */}
               <div className="relative">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   id="confirmPassword"
                   {...register("confirmPassword", {
-                    required: "Please confirm your password",
-                    validate: (value) =>
-                      value === watch("newPassword") ||
-                      "Passwords do not match",
+                    required: "Confirm password is required",
+                    validate: (v) =>
+                      v === watch("newPassword") || "Passwords do not match",
                   })}
                   className="w-full bg-[#FAFAFA] border border-[#FAFAFA] py-4 px-4 rounded-md focus:outline-none focus:border-primary pr-12"
                   placeholder="Confirm Password"

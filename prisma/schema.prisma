@@ -1,0 +1,151 @@
+generator client {
+provider = "prisma-client-js"
+}
+
+datasource db {
+provider = "postgresql"
+url      = env("DATABASE_URL")
+}
+
+enum Sex {
+male
+female
+}
+
+enum Visibility {
+nobody
+only_matches
+everyone
+}
+
+model Profile {
+userId                    String     @id @db.Uuid
+userName                  String
+firstName                 String?
+lastName                  String?
+dob                       DateTime?
+sex                       Sex
+relationshipGoal          String
+religion                  String?
+profileCompletionPercentage Int?
+lastUserNameChange        DateTime?
+visibility                Visibility @default(everyone)
+distance                  Float?
+location                  ProfileLocation?
+images                    ProfileImage[]
+attributes                ProfileAttribute?
+professionalDetails       ProfessionalDetail?
+lifestyle                 Lifestyle?
+preferences               Preference?
+filterPreferences         FilterPreference?
+personaDetails            PersonaDetail?
+interests                 Interest[]
+blockedContacts           BlockedContact[]
+
+@@map("profiles")
+}
+
+model ProfileLocation {
+id         Int     @id @default(autoincrement())
+profile    Profile @relation(fields: [profileId], references: [userId])
+profileId  String  @unique @db.Uuid
+longitude  Float
+latitude   Float
+}
+
+model ProfileImage {
+id         String   @id @default(uuid()) @db.Uuid
+profile    Profile  @relation(fields: [profileId], references: [userId])
+profileId  String   @db.Uuid
+url        String
+createdAt  DateTime @default(now())
+}
+
+model ProfileAttribute {
+id         Int     @id @default(autoincrement())
+profile    Profile @relation(fields: [profileId], references: [userId])
+profileId  String  @unique @db.Uuid
+bio        String?
+weight     Float?
+height     Float?
+bloodType  String?
+}
+
+model ProfessionalDetail {
+id                   Int                 @id @default(autoincrement())
+profile              Profile             @relation(fields: [profileId], references: [userId])
+profileId            String              @unique @db.Uuid
+occupation           String?
+currentCompany       String?
+school               String?
+degreeType           String?
+languages            ProfessionalLanguage[]
+}
+
+model ProfessionalLanguage {
+id                    Int                 @id @default(autoincrement())
+professionalDetail    ProfessionalDetail  @relation(fields: [professionalDetailId], references: [id])
+professionalDetailId  Int
+language              String
+}
+
+model Lifestyle {
+id                    Int     @id @default(autoincrement())
+profile               Profile @relation(fields: [profileId], references: [userId])
+profileId             String  @unique @db.Uuid
+pets                  String[]
+drinkingHabits        String?
+smokingHabits         String?
+sleepingHabit         String?
+workout               String?
+socialMediaPresence   String?
+}
+
+model Preference {
+id            Int     @id @default(autoincrement())
+profile       Profile @relation(fields: [profileId], references: [userId])
+profileId     String  @unique @db.Uuid
+moviePrefs    String[]
+musicPrefs    String[]
+travelPrefs   String[]
+dietaryPrefs  String[]
+bookPrefs     String[]
+}
+
+model FilterPreference {
+id                   Int     @id @default(autoincrement())
+profile              Profile @relation(fields: [profileId], references: [userId])
+profileId            String  @unique @db.Uuid
+minAge               Int?
+maxAge               Int?
+relationshipGoal     String?
+religion             String?
+degreeType           String?
+hasBio               Boolean?
+fallback             Boolean?
+}
+
+model PersonaDetail {
+id                    Int     @id @default(autoincrement())
+profile               Profile @relation(fields: [profileId], references: [userId])
+profileId             String  @unique @db.Uuid
+zodiacSign            String?
+personalityType       String?
+communicationStyle    String?
+familyPlans           String?
+genotype              String?
+}
+
+model Interest {
+id         Int     @id @default(autoincrement())
+profile    Profile @relation(fields: [profileId], references: [userId])
+profileId  String  @db.Uuid
+interest   String
+}
+
+model BlockedContact {
+id              Int     @id @default(autoincrement())
+profile         Profile @relation(fields: [profileId], references: [userId])
+profileId       String  @db.Uuid
+blockedUserId   String  @db.Uuid
+}

@@ -36,7 +36,6 @@ export async function requireUserProfile(): Promise<Profile | null > {
     profile = await userProfileService.getById(userId);
     profileExists = true;
   } catch {
-    // 404 or error => no profile
   }
   if (!profileExists) {
     return redirect("/create-profile");

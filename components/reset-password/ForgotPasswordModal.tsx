@@ -1,12 +1,12 @@
-import { useState, useEffect, useCallback } from "react";
+"use client";
+import React, { useState, useEffect, useCallback } from "react";
 import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
 import { IoMail } from "react-icons/io5";
 import { useForm } from "react-hook-form";
 import { OtpVerificationModal } from "./OtpVerificationModal";
 import { NewPasswordModal } from "./NewPasswordModal";
-import { useAuth, useSignIn } from "@clerk/nextjs";
+// import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
-// import { useCallback } from "react";
 
 interface ForgotPasswordModalProps {
   isOpen: boolean;
@@ -23,34 +23,22 @@ export const ForgotPasswordModal = ({
   isOpen,
   onClose,
   onLoginClose,
-
   onLoginOpen,
 }: ForgotPasswordModalProps) => {
   const router = useRouter();
-  const { isSignedIn } = useAuth();
-  const { isLoaded: isAuthLoaded } = useAuth();
-  const { isLoaded: isSignInLoaded, signIn } = useSignIn();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string>("");
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [showNewPasswordModal, setShowNewPasswordModal] = useState(false);
-  const [email, setEmail] = useState("");
-  // const [code, setCode] = useState("");
-  const [pendingOtp, setPendingOtp] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [pendingOtp, setPendingOtp] = useState<string>("");
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset: resetForm,
+    reset,
   } = useForm<ForgotPasswordFormData>();
-
-  useEffect(() => {
-    if (isSignedIn) {
-      router.push("/");
-      onClose();
-    }
-  }, [isSignedIn, router, onClose]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -70,45 +58,26 @@ export const ForgotPasswordModal = ({
     setShowNewPasswordModal(true);
   }, []);
 
-  const handlePasswordReset = useCallback(
-    async (email: string) => {
-      try {
-        await signIn?.create({
-          strategy: "reset_password_email_code",
-          identifier: email,
-        });
-        setShowOtpModal(true);
-        onLoginClose();
-      } catch (err) {
-        const clerkError = err as import("@clerk/nextjs").ClerkAPIResponse;
-        console.error("Password reset error:", clerkError);
-        setError(
-          clerkError?.errors?.[0]?.longMessage ||
-            "Failed to send OTP. Please try again."
-        );
-      }
-    },
-    [signIn, onLoginClose]
-  );
-
   const onSubmit = useCallback(
     async (data: ForgotPasswordFormData) => {
       setIsLoading(true);
       setError("");
       try {
-        await handlePasswordReset(data.email);
+        // TODO: trigger Supabase password reset, e.g.
+        // const { error: resetError } = await supabase.auth.resetPasswordForEmail(data.email);
+        // if (resetError) throw resetError;
+
         setEmail(data.email);
-        resetForm();
-      } catch (err) {
-        console.error("Form submission error:", err);
+        setShowOtpModal(true);
+        reset();
+      } catch (err: any) {
+        setError(err.message || "Failed to send OTP. Please try again.");
       } finally {
         setIsLoading(false);
       }
     },
-    [handlePasswordReset, resetForm]
+    [reset]
   );
-
-  if (!isAuthLoaded || !isSignInLoaded) return null;
 
   return (
     <>
@@ -118,11 +87,10 @@ export const ForgotPasswordModal = ({
           <div className="space-y-4 px-8 py-4">
             <div>
               <h2 className="text-xl font-outfit font-semibold text-black">
-                Please reset your password 🔑
+                Reset your password 🔑
               </h2>
               <p className="text-gray-600 mt-2">
-                Please enter your email and we&apos;ll send an OTP code to reset
-                your password.
+                Enter your email and we’ll send an OTP to reset your password.
               </p>
             </div>
 
@@ -169,7 +137,7 @@ export const ForgotPasswordModal = ({
                 disabled={isLoading}
                 className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-4 px-4 rounded-full transition-colors"
               >
-                {isLoading ? "Sending..." : "Send"}
+                {isLoading ? "Sending..." : "Send OTP"}
               </button>
             </form>
           </div>

@@ -10,14 +10,22 @@ import { SignupModal } from "./SignUpModal";
 import { LoginModal } from "./LoginModal";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useRouter } from "next/navigation";
+import CheckMailModal from "./CheckMailModal";
 
 export function ClientHomepage() {
   const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isCheckOpen, setIsCheckOpen] = useState(false);
+
   const [activeSlide, setActiveSlide] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
   const router = useRouter();
+
+  function handleSignUpSuccess() {
+    setIsCheckOpen(true);
+    setIsSignupModalOpen(false);
+  }
 
   const slides = [
     {
@@ -158,7 +166,12 @@ export function ClientHomepage() {
         <>
           <SignupModal
             isOpen={isSignupModalOpen}
+            onSuccess={handleSignUpSuccess}
             onClose={() => setIsSignupModalOpen(false)}
+          />
+          <CheckMailModal
+            isOpen={isCheckOpen}
+            onClose={() => setIsCheckOpen(false)}
           />
           <LoginModal
             isOpen={isLoginModalOpen}

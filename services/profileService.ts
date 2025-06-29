@@ -1,24 +1,41 @@
+import { Profile } from "@/types/profile";
+import { prisma } from "./prismaClient";
 
-import axios from "axios";
-import { handleError } from "./UserProfileService";
+import { Prisma } from "@prisma/client";
+import { redirect } from "next/navigation";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-
-export const profileService = {
-    async getProfiles(id: string, distance: string | null, unit: string | null) {
-        try {
-            const res = await axios.get(`${baseUrl}/api/matching/auto_match`, {
-                params: {
-                    userId: id,
-                    maxDistance: distance,
-                    unit
-                }
-            })
-            return res.data
-        } catch(error) {
-            handleError(error)
-        }
+export const getProfileById = async (id: string) => {
+  const profile = await prisma.profile.findUnique({
+    where: { userId: id },
+    include: {
+      location: true,
+      images: true,
+      attributes: true,
+      professionalDetails: {
+        include: {
+          languages: true,
+        },
+      },
+      lifestyle: true,
+      preferences: true,
+      filterPreferences: true,
+      personaDetails: true,
+      interests: true,
+      blockedContacts: true,
     },
-    // There should be a service method for manual filtering but endpoint is structured unusual
-    
-}
+  });
+
+  if (!profile) {
+    redirect("/profile-registration");
+  }
+
+  return profile;
+};
+
+    export const createProfile = async (data: Profile) => {
+        const profile = await prisma.profile.create({
+            data: {
+                
+            }
+        })
+    }

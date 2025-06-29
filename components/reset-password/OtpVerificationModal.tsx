@@ -1,6 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
-import { Dialog, DialogContent, DialogOverlay, DialogTitle } from "@/components/ui/dialog";
-import { useSignIn } from "@clerk/nextjs";
+"use client";
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogOverlay,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface OtpVerificationModalProps {
   isOpen: boolean;
@@ -19,81 +24,72 @@ export const OtpVerificationModal = ({
   const [timeLeft, setTimeLeft] = useState(60);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const { signIn } = useSignIn();
 
   useEffect(() => {
     if (!isOpen) return;
-
     const timer = setInterval(() => {
       setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
-
     return () => clearInterval(timer);
   }, [isOpen]);
 
-  const handleInputChange = useCallback((index: number, value: string) => {
-    if (!/^\d*$/.test(value)) return;
-    const newOtp = [...otp];
-    newOtp[index] = value;
-    setOtp(newOtp);
-    setError("");
-    if (value && index < 5) {
-      const nextInput = document.getElementById(`otp-${index + 1}`);
-      nextInput?.focus();
-    }
-  }, [otp]);
+  const handleInputChange = useCallback(
+    (index: number, value: string) => {
+      if (!/^\d*$/.test(value)) return;
+      const newOtp = [...otp];
+      newOtp[index] = value;
+      setOtp(newOtp);
+      setError("");
+      if (value && index < 5) {
+        const nextInput = document.getElementById(`otp-${index + 1}`);
+        nextInput?.focus();
+      }
+    },
+    [otp]
+  );
 
-  const handleKeyDown = useCallback((
-    index: number,
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => {
-    if (e.key === "Backspace" && !otp[index] && index > 0) {
-      const prevInput = document.getElementById(`otp-${index - 1}`);
-      prevInput?.focus();
-    }
-  }, [otp]);
+  const handleKeyDown = useCallback(
+    (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Backspace" && !otp[index] && index > 0) {
+        const prevInput = document.getElementById(`otp-${index - 1}`);
+        prevInput?.focus();
+      }
+    },
+    [otp]
+  );
 
   const handleResendCode = useCallback(async () => {
     if (timeLeft > 0) return;
     try {
-      await signIn?.create({
-        strategy: "reset_password_email_code",
-        identifier: email,
-      });
+      // TODO: trigger Supabase to resend magic link or OTP for password reset
+      // e.g. await supabase.auth.resetPasswordForEmail(email);
       setTimeLeft(60);
       setError("");
-    } catch (err) {
-      const clerkError = err as import('@clerk/nextjs').ClerkAPIResponse;
-      setError(
-        clerkError?.errors?.[0]?.longMessage || "Failed to resend code. Please try again."
-      );
+    } catch (err: any) {
+      setError(err.message || "Failed to resend code. Please try again.");
     }
-  }, [timeLeft, signIn, email]);
+  }, [timeLeft, email]);
 
-  const handleSubmit = useCallback(async () => {
+  const handleSubmit = useCallback(() => {
     const otpString = otp.join("");
     if (otpString.length !== 6) {
       setError("Please enter a valid 6-digit code");
       return;
     }
-
     setIsLoading(true);
     try {
-      // Only verify OTP format here, not with Clerk yet
       onSuccess(otpString);
       onClose();
-    } catch (err) {
-      const clerkError = err as import('@clerk/nextjs').ClerkAPIResponse;
-      setError(
-        clerkError?.errors?.[0]?.longMessage || "Invalid verification code. Please try again."
-      );
+    } catch (err: any) {
+      setError(err.message || "Invalid verification code. Please try again.");
     } finally {
       setIsLoading(false);
     }
   }, [otp, onSuccess, onClose]);
 
-  const maskedEmail = email.replace(/(\w{2})(\w+)(\w@)/, (_, a, b, c) => 
-    a + '*'.repeat(b.length) + c
+  const maskedEmail = email.replace(
+    /(\w{2})(\w+)(\w@)/,
+    (_, a, b, c) => a + "*".repeat(b.length) + c
   );
 
   return (
@@ -131,8 +127,7 @@ export const OtpVerificationModal = ({
                 value={digit}
                 onChange={(e) => handleInputChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
-                className="w-12 h-12 text-center text-2xl font-semibold border rounded-md 
-                  focus:outline-none focus:border-primary bg-[#FAFAFA]"
+                className="w-12 h-12 text-center text-2xl font-semibold border rounded-md focus:outline-none focus:border-primary bg-[#FAFAFA]"
                 disabled={isLoading}
               />
             ))}
@@ -144,8 +139,7 @@ export const OtpVerificationModal = ({
               type="button"
               onClick={handleResendCode}
               disabled={timeLeft > 0 || isLoading}
-              className="text-primary hover:text-primary/80 transition-colors 
-                disabled:text-gray-400 disabled:cursor-not-allowed"
+              className="text-primary hover:text-primary/80 transition-colors disabled:text-gray-400 disabled:cursor-not-allowed"
             >
               {timeLeft > 0 ? `Resend code in ${timeLeft}s` : "Resend code"}
             </button>
@@ -154,8 +148,7 @@ export const OtpVerificationModal = ({
           <button
             onClick={handleSubmit}
             disabled={otp.some((digit) => !digit) || isLoading}
-            className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-4 px-4 
-              rounded-full transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-4 px-4 rounded-full transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             {isLoading ? "Verifying..." : "Continue"}
           </button>

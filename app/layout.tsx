@@ -1,39 +1,38 @@
 import { Outfit } from "next/font/google";
-import {
-  ClerkProvider } from '@clerk/nextjs'
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
 import "./globals.css";
 import ReactQueryProvider from "@/components/ui/providers/providers";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 
 const outfit = Outfit({
-  variable: "--font-outfit",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
+
+  if (data?.user) {
+    redirect("/app");
+  }
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${outfit.variable} antialiased`}>
+      <body className={`${outfit.className} antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <ClerkProvider
-            publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
-          >
-            <ReactQueryProvider>
-              {children}
-            </ReactQueryProvider>
-            <Toaster position="top-center" richColors closeButton />
-          </ClerkProvider>
+          <ReactQueryProvider>{children}</ReactQueryProvider>
+          <Toaster position="top-center" richColors closeButton />
         </ThemeProvider>
       </body>
     </html>
