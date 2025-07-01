@@ -35,7 +35,7 @@ const DiscoveryPreferencesPage = () => {
       // Convert from kilometers to miles
       setDistanceRange(Math.round(distanceRange * KM_TO_MILES));
     }
-  }, [distanceUnit]);
+  }, [distanceUnit, distanceRange]);
 
   // Handle unit conversion without the effect loop
   const handleUnitChange = (newUnit: DistanceUnit) => {

@@ -6,6 +6,7 @@ import RelationshipGoalsModal from "@/components/RelationshipGoalsModal";
 import { ZodiacFilter } from "@/components/filter/ZodiacFilter";
 import { BloodGroupFilter } from "@/components/filter/BloodGroupFilter";
 import { EducationFilter } from "@/components/filter/EducationFilter";
+import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 
@@ -316,7 +317,13 @@ export default function FilterScreen() {
                 className="flex justify-between items-center w-full p-4 hover:bg-gray-50 rounded-lg transition-colors"
               >
                 <div className="flex items-center gap-4">
-                  <img src={item.icon} alt={item.label} className="w-5 h-5" />
+                  <Image
+                    width={30}
+                    src={item.icon}
+                    alt={item.label}
+                    className="w-5 h-5"
+                    height={30}
+                  />
                   <span className="font-outfit font-medium text-[18px] text-[#212121]">
                     {item.label}
                   </span>
@@ -346,7 +353,13 @@ export default function FilterScreen() {
                 className="flex justify-between items-center w-full p-4 hover:bg-gray-50 rounded-lg transition-colors"
               >
                 <div className="flex items-center gap-4">
-                  <img src={item.icon} alt={item.label} className="w-5 h-5" />
+                  <Image
+                    src={item.icon}
+                    alt={item.label}
+                    className="w-5 h-5"
+                    width={30}
+                    height={30}
+                  />
                   <span className="font-outfit font-medium text-[18px] text-[#212121]">
                     {item.label}
                   </span>

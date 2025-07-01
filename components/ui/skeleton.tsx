@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 // src/components/ui/skeleton.tsx
 import { cn } from "@/lib/utils";
 

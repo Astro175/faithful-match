@@ -12,12 +12,7 @@ export default function MatchStoreInitializer() {
     // and update the store
 
     // This is where you'd integrate with the backend
-    const fetchMatches = async () => {
-      try {
-      } catch (error) {
-        console.error("Error fetching matches:", error);
-      }
-    };
+
   }, []);
 
   return null; // This component doesn't render anything

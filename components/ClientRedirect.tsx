@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { useRouter } from "next/navigation";
 
 export default function ClientRedirect({
   deviceTypeFromServer,

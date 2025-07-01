@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import {
@@ -11,7 +11,6 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { IoMail } from "react-icons/io5";
 // import { supabase } from "@/lib/supabaseClient";
-import { ForgotPasswordModal } from "./reset-password/ForgotPasswordModal";
 
 type LoginFormData = {
   email: string;
@@ -29,10 +28,11 @@ export const LoginModal = ({
   isOpen,
   onClose,
   onOpenSignup,
-  onOpenLogin,
+
 }: LoginModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
 
   const router = useRouter();
@@ -43,11 +43,8 @@ export const LoginModal = ({
     formState: { errors },
   } = useForm<LoginFormData>();
 
-  const handleCloseForgotPassword = useCallback(() => {
-    setIsForgotPasswordOpen(false);
-  }, []);
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async () => {
     setIsLoading(true);
     setError("");
 

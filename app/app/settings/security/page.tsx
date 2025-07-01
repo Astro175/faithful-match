@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import { useClerk } from "@clerk/clerk-react";
 import axios from "axios";
-import { FiChevronRight, FiChevronLeft } from "react-icons/fi";
+import { FiChevronRight } from "react-icons/fi";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -31,6 +31,7 @@ export default function AccountSecurity() {
       await user?.delete();
       await axios.delete("/api/user/delete-account");
       window.location.href = "/";
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError("Error deleting account. Please try again.");
       setLoading(false);
@@ -96,7 +97,7 @@ export default function AccountSecurity() {
             <FiChevronRight className="ml-2 text-muted-foreground" size={18} />
           </div>
           <p className="text-base text-muted-foreground">
-            Temporarily hide your profile. Easily reactivate when you're ready.
+            Temporarily hide your profile. Easily reactivate when you&apos;re ready.
           </p>
         </div>
 
@@ -161,7 +162,7 @@ export default function AccountSecurity() {
             </DialogHeader>
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                We'll send a verification code to your email to change your
+                We&apos;ll send a verification code to your email to change your
                 password.
               </p>
               <Button

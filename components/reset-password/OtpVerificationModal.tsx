@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import {
@@ -68,7 +69,7 @@ export const OtpVerificationModal = ({
     } catch (err: any) {
       setError(err.message || "Failed to resend code. Please try again.");
     }
-  }, [timeLeft, email]);
+  }, [timeLeft]);
 
   const handleSubmit = useCallback(() => {
     const otpString = otp.join("");

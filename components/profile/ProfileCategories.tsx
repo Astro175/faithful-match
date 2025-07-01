@@ -1,5 +1,6 @@
 import { IoIosArrowForward } from "react-icons/io";
 import { Profile } from "./types";
+import Image from "next/image";
 
 interface CategoryItem {
   key: string;
@@ -60,7 +61,13 @@ export const ProfileCategories = ({
             className="flex justify-between items-center w-full p-4 hover:bg-gray-50 rounded-lg transition-colors"
           >
             <div className="flex items-center gap-4">
-              <img src={item.icon} alt={item.label} className="w-5 h-5" />
+              <Image
+                src={item.icon}
+                alt={item.label}
+                className="w-5 h-5"
+                width={30}
+                height={30}
+              />
               <span className="font-outfit font-medium text-[18px] text-[#212121]">
                 {item.label}
               </span>

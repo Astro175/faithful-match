@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
@@ -6,7 +7,6 @@ import { useForm } from "react-hook-form";
 import { OtpVerificationModal } from "./OtpVerificationModal";
 import { NewPasswordModal } from "./NewPasswordModal";
 // import { supabase } from "@/lib/supabaseClient";
-import { useRouter } from "next/navigation";
 
 interface ForgotPasswordModalProps {
   isOpen: boolean;
@@ -22,10 +22,9 @@ interface ForgotPasswordFormData {
 export const ForgotPasswordModal = ({
   isOpen,
   onClose,
-  onLoginClose,
+
   onLoginOpen,
 }: ForgotPasswordModalProps) => {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>("");
   const [showOtpModal, setShowOtpModal] = useState(false);
