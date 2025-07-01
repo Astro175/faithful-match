@@ -6,8 +6,6 @@ import {
   DialogContent,
   DialogOverlay,
   DialogHeader,
-  DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
 import { MdOutlineMarkEmailUnread } from "react-icons/md";
 import { useUserStore } from "@/store/useUserStore";

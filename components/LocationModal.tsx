@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
+import { useCallback } from "react";
 
 import React, { useState, useEffect } from "react";
 import { Button } from "./ui/button";
@@ -16,13 +18,27 @@ interface LocationModalProps {
 }
 
 const LocationModal: React.FC<LocationModalProps> = ({ locationContext }) => {
-  const { location, setLocation } = locationContext;
+  const { setLocation } = locationContext;
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const getApproximateLocation = useCallback(() => {
+    // your fallback logic, for example:
+    fetch("https://ipapi.co/json/")
+      .then((res) => res.json())
+      .then((data) => {
+        setLocation({
+          lat: data.latitude,
+          lng: data.longitude,
+        });
+      })
+      .catch(() => {
+        setErrorMessage("Failed to fetch approximate location.");
+      });
+  }, [setLocation]);
 
   // Get precise geolocation
-  const getGeolocation = () => {
+  const getGeolocation = useCallback(() => {
     setIsLoading(true);
     setErrorMessage("");
 
@@ -47,32 +63,19 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationContext }) => {
     } else {
       getApproximateLocation();
     }
-  };
-
-  const getApproximateLocation = async () => {
-    try {
-      setIsLoading(true);
-      const response = await fetch("https://ipapi.co/json/");
-      const data = await response.json();
-      setLocation({
-        lat: data.latitude,
-        lng: data.longitude,
-      });
-      setIsModalOpen(false);
-    } catch (error) {
-      setErrorMessage(
-        "Could not determine your location. Matches may be less accurate."
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [
+    setIsLoading,
+    setErrorMessage,
+    setLocation,
+    setIsModalOpen,
+    getApproximateLocation,
+  ]);
 
   useEffect(() => {
     if (isModalOpen) {
       getGeolocation();
     }
-  }, []);
+  }, [getGeolocation, isModalOpen]);
 
   if (!isModalOpen) return null;
 
