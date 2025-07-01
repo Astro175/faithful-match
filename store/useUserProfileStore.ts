@@ -1,19 +1,16 @@
 import { Profile } from "@/types/profile";
 import { create } from "zustand";
 
-type userProfileState = {
-  userProfile: Partial<Profile>;
-  setUserProfile: (data: Partial<Profile>) => void;
+type ProfileStore = {
+  profile: Profile | null;
+  setProfile: (profile: Profile) => void;
+  clearProfile: () => void;
 };
 
-export const useUserProfileStore = () =>
-  create<userProfileState>((set) => ({
-    userProfile: {},
-    setUserProfile: (data: Partial<Profile>) =>
-      set((state) => ({
-        userProfile: {
-          ...state.userProfile,
-          ...data,
-        },
-      })),
-  }));
+export const useProfileStore = create<ProfileStore>((set) => ({
+  profile: null,
+  setProfile: (profile) => set({ profile }),
+  clearProfile: () => set({ profile: null }),
+}));
+
+export const useProfile = () => useProfileStore((state) => state.profile);

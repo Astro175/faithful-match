@@ -11,82 +11,111 @@ import {
 } from "@/components/ui/dialog";
 import { FiChevronRight, FiMapPin, FiLock, FiLoader } from "react-icons/fi";
 
-// Custom debounce function
-function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
+// ========= Types =========
+
+type DistanceUnit = "mi" | "km";
+type GenderPreference = "Men" | "Women" | "Everyone";
+
+type OSMAddress = {
+  state?: string;
+  country?: string;
+  [key: string]: string | undefined;
+};
+
+type OSMApiResponse = {
+  place_id: number;
+  name: string;
+  lat: string;
+  lon: string;
+  address: OSMAddress;
+}[];
+
+type CitySuggestion = {
+  id: number;
+  name: string;
+  fullName: string;
+  coordinates: [number, number];
+  address: OSMAddress;
+};
+
+// ========= Debounce Helper =========
+
+function debounce<T extends (...args: Parameters<T>) => ReturnType<T>>(
+  func: T,
+  wait: number
+): (...args: Parameters<T>) => void {
+  let timeoutId: ReturnType<typeof setTimeout>;
+
+  return (...args: Parameters<T>): void => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
       func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
+    }, wait);
   };
 }
 
-// Cache implementation
+// ========= Local Cache =========
+
 const locationCache = {
-  cache: {},
-  CACHE_DURATION: 24 * 60 * 60 * 1000,
+  cache: {} as Record<string, { results: CitySuggestion[]; timestamp: number }>,
+  CACHE_DURATION: 24 * 60 * 60 * 1000, // 24 hours
 
-  set: function (query, results) {
-    this.cache[query] = {
-      results,
-      timestamp: Date.now(),
-    };
-
+  set(query: string, results: CitySuggestion[]) {
+    this.cache[query] = { results, timestamp: Date.now() };
     try {
-      const cacheData = JSON.stringify(this.cache);
-      localStorage.setItem("locationCache", cacheData);
-    } catch (e) {
-      console.warn("Failed to save to localStorage:", e);
+      localStorage.setItem("locationCache", JSON.stringify(this.cache));
+    } catch (err) {
+      console.warn("Failed to store cache in localStorage", err);
     }
   },
 
-  get: function (query) {
-    const cacheEntry = this.cache[query];
-    if (!cacheEntry) return null;
-
-    if (Date.now() - cacheEntry.timestamp > this.CACHE_DURATION) {
+  get(query: string): CitySuggestion[] | null {
+    const cached = this.cache[query];
+    if (!cached) return null;
+    if (Date.now() - cached.timestamp > this.CACHE_DURATION) {
       delete this.cache[query];
       return null;
     }
-
-    return cacheEntry.results;
+    return cached.results;
   },
 
-  init: function () {
+  init() {
     try {
-      const savedCache = localStorage.getItem("locationCache");
-      if (savedCache) {
-        this.cache = JSON.parse(savedCache);
+      const saved = localStorage.getItem("locationCache");
+      if (saved) {
+        const parsed = JSON.parse(saved) as typeof this.cache;
+        this.cache = parsed;
       }
-    } catch (e) {
-      console.warn("Failed to load from localStorage:", e);
+    } catch (err) {
+      console.warn("Failed to load cache from localStorage", err);
     }
   },
 };
 
-// Initialize cache from localStorage
 locationCache.init();
+
+// ========= Main Component =========
 
 export default function DiscoveryPreferences() {
   const [location, setLocation] = useState("Current Location");
   const [global, setGlobal] = useState(false);
-  const [showMe, setShowMe] = useState("Women");
-  const [distanceUnit, setDistanceUnit] = useState<"km" | "mi">("mi");
+  const [showMe, setShowMe] = useState<GenderPreference>("Women");
+  const [distanceUnit, setDistanceUnit] = useState<DistanceUnit>("mi");
   const [distanceRange, setDistanceRange] = useState(200);
   const [ageRange, setAgeRange] = useState<[number, number]>([20, 25]);
   const [showModal, setShowModal] = useState(false);
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
+  const [suggestions, setSuggestions] = useState<CitySuggestion[]>([]);
   const [isPremium, setIsPremium] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [lastRequestTime, setLastRequestTime] = useState(0);
 
-  const searchCities = async (query) => {
+  const convertDistance = (val: number) =>
+    distanceUnit === "mi" ? val : Math.round(val * 0.621371);
+
+  const searchCities = async (query: string) => {
     if (!query || query.length < 3) {
       setSuggestions([]);
       return;
@@ -104,65 +133,59 @@ export default function DiscoveryPreferences() {
     const now = Date.now();
     const timeSinceLastRequest = now - lastRequestTime;
     if (timeSinceLastRequest < 1000) {
-      await new Promise((resolve) =>
-        setTimeout(resolve, 1000 - timeSinceLastRequest)
-      );
+      await new Promise((res) => setTimeout(res, 1000 - timeSinceLastRequest));
     }
 
     try {
-      const response = await fetch(
+      const res = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
           query
         )}&limit=5&addressdetails=1&featuretype=city`
       );
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch cities");
+      if (!res.ok) {
+        throw new Error("Failed to fetch city suggestions");
       }
 
-      const data = await response.json();
+      const data: OSMApiResponse = await res.json();
 
-      const formattedResults = data.map((result) => ({
-        id: result.place_id,
-        name: result.name,
-        fullName: `${result.name}, ${
-          result.address.state || result.address.country
+      const formatted: CitySuggestion[] = data.map((entry) => ({
+        id: entry.place_id,
+        name: entry.name,
+        fullName: `${entry.name}, ${
+          entry.address.state || entry.address.country
         }`,
-        coordinates: [parseFloat(result.lon), parseFloat(result.lat)],
-        address: result.address,
+        coordinates: [parseFloat(entry.lon), parseFloat(entry.lat)],
+        address: entry.address,
       }));
 
-      locationCache.set(query, formattedResults);
-      setSuggestions(formattedResults);
+      locationCache.set(query, formatted);
+      setSuggestions(formatted);
       setLastRequestTime(Date.now());
-    } catch (err) {
-      setError("Failed to fetch city suggestions. Please try again.");
-      setSuggestions([]);
-    } finally {
-      setIsLoading(false);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        setError(
+          e.message || "Failed to fetch city suggestions. Please try again."
+        );
+      } else {
+        setError("Failed to fetch city suggestions. Please try again.");
+      }
     }
   };
 
-  // Debounced search function
-  const debouncedSearch = debounce((query) => searchCities(query), 300);
+  const debouncedSearch = debounce(searchCities, 300);
 
-  const handleLocationSearch = (query) => {
+  const handleLocationSearch = (query: string) => {
     setSearchQuery(query);
     debouncedSearch(query);
   };
 
-  const handleLocationSelect = (location) => {
-    if (!isPremium) {
-      return;
-    }
-    setLocation(location.fullName);
-    setShowLocationModal(false);
+  const handleLocationSelect = (city: CitySuggestion) => {
+    if (!isPremium) return;
+    setLocation(city.fullName);
     setSearchQuery("");
     setSuggestions([]);
-  };
-
-  const convertDistance = (value: number) => {
-    return distanceUnit === "mi" ? value : Math.round(value * 0.621371);
+    setShowLocationModal(false);
   };
 
   return (
@@ -225,7 +248,7 @@ export default function DiscoveryPreferences() {
         </div>
       </div>
 
-      {/* Show Distances In Section */}
+      {/* Distance Units */}
       <div className="mb-8">
         <h3 className="font-outfit font-semibold text-[#212121] text-lg mb-4">
           Show Distances In
@@ -247,10 +270,10 @@ export default function DiscoveryPreferences() {
         </div>
       </div>
 
-      {/* Distance Range Section */}
+      {/* Distance Range */}
       <div className="mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-outfit font-semibold text-[#212121] text-lg">
+        <div className="flex justify-between mb-2">
+          <h3 className="font-outfit font-semibold text-lg text-[#212121]">
             Distance Range
           </h3>
           <span className="font-outfit font-medium text-xl">
@@ -260,22 +283,19 @@ export default function DiscoveryPreferences() {
         <Slider
           value={[distanceRange]}
           max={distanceUnit === "mi" ? 250 : 400}
-          onValueChange={(value) => setDistanceRange(value[0])}
+          onValueChange={(v) => setDistanceRange(v[0])}
           className="w-full"
         />
-        <p className="font-outfit text-[#616161] text-base mt-2">
-          Set the maximum distance for potential matches.
-        </p>
       </div>
 
-      {/* Age Range Section */}
+      {/* Age Range */}
       <div className="mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-outfit font-semibold text-[#212121] text-lg">
+        <div className="flex justify-between mb-2">
+          <h3 className="font-outfit font-semibold text-lg text-[#212121]">
             Age Range
           </h3>
           <span className="font-outfit">
-            {ageRange[0]}-{ageRange[1]}
+            {ageRange[0]} - {ageRange[1]}
           </span>
         </div>
         <Slider
@@ -283,13 +303,10 @@ export default function DiscoveryPreferences() {
           min={18}
           max={100}
           step={1}
-          onValueChange={(value) => setAgeRange(value as [number, number])}
+          onValueChange={(v) => setAgeRange(v as [number, number])}
           minStepsBetweenThumbs={1}
           className="w-full"
         />
-        <p className="font-outfit text-[#616161] text-base mt-2">
-          Define the preferred age range for potential matches.
-        </p>
       </div>
 
       {/* Location Modal */}
@@ -304,9 +321,9 @@ export default function DiscoveryPreferences() {
           {!isPremium && (
             <div className="bg-[#FEE2E2] border border-[#DD101E] p-3 rounded-lg flex items-center gap-2">
               <FiLock className="text-[#DD101E]" />
-              <p className="font-outfit text-[#212121] text-sm">
-                Location change is a premium feature. Upgrade to change your
-                location and match with people anywhere!
+              <p className="font-outfit text-sm text-[#212121]">
+                Location change is a premium feature. Upgrade to match with
+                people anywhere!
               </p>
             </div>
           )}
@@ -335,7 +352,7 @@ export default function DiscoveryPreferences() {
                   disabled={!isPremium}
                   className={`w-full p-3 text-left rounded-lg font-outfit ${
                     isPremium
-                      ? "hover:bg-gray-100 active:bg-gray-200"
+                      ? "hover:bg-gray-100"
                       : "opacity-50 cursor-not-allowed"
                   }`}
                 >
@@ -349,8 +366,8 @@ export default function DiscoveryPreferences() {
 
             {!isPremium && (
               <button
-                className="w-full bg-[#DD101E] text-white py-3 rounded-lg font-outfit hover:bg-[#BB0000]"
                 onClick={() => setIsPremium(true)}
+                className="w-full bg-[#DD101E] text-white py-3 rounded-lg font-outfit hover:bg-[#BB0000]"
               >
                 Upgrade to Premium
               </button>
@@ -368,14 +385,14 @@ export default function DiscoveryPreferences() {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            {["Men", "Women", "Everyone"].map((option) => (
+            {(["Men", "Women", "Everyone"] as const).map((option) => (
               <button
                 key={option}
                 onClick={() => {
                   setShowMe(option);
                   setShowModal(false);
                 }}
-                className={`w-full p-3 rounded-lg font-outfit text-left ${
+                className={`w-full p-3 text-left rounded-lg font-outfit ${
                   showMe === option
                     ? "bg-[#DD101E] text-white"
                     : "hover:bg-gray-100"

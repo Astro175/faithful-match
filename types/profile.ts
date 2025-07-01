@@ -1,25 +1,17 @@
-export enum Sex {
-  Male = "male",
-  Female = "female",
-}
+import { Sex } from "@prisma/client";
+import { Visibility } from "@prisma/client";
 
-export enum Visibility {
-  Nobody = "nobody",
-  OnlyMatches = "only_matches",
-  Everyone = "everyone",
-}
 
 export type Profile = {
   userId: string;
   userName: string;
   firstName?: string;
-  lastName?: string;
   dob?: string;
   location?: {
     longitude: number;
     latitude: number;
   };
-  sex: Sex;
+  sex: Sex | null;
   relationshipGoal: string;
   interests: string[];
   profileImg?: string;

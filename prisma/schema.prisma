@@ -21,13 +21,12 @@ everyone
 model Profile {
 userId                    String     @id @db.Uuid
 userName                  String
-firstName                 String?
-lastName                  String?
-dob                       DateTime?
-sex                       Sex
+firstName                 String
+dob                       DateTime
+sex                       Sex?
 relationshipGoal          String
 religion                  String?
-profileCompletionPercentage Int?
+profileCompletionPercentage Int
 lastUserNameChange        DateTime?
 visibility                Visibility @default(everyone)
 distance                  Float?

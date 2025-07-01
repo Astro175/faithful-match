@@ -98,7 +98,7 @@ export function DesktopHomepage() {
 
       <SignupModal
         isOpen={isSignupModalOpen}
-        onSuccess={}
+        onSuccess={() => setIsSignupModalOpen(false)}
         onClose={() => setIsSignupModalOpen(false)}
       />
       <LoginModal

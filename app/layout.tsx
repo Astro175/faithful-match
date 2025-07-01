@@ -3,8 +3,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
 import "./globals.css";
 import ReactQueryProvider from "@/components/ui/providers/providers";
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
+
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -16,12 +15,8 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
+  
 
-  if (data?.user) {
-    redirect("/app");
-  }
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${outfit.className} antialiased`}>

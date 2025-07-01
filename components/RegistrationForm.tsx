@@ -5,17 +5,16 @@ import { useForm } from "react-hook-form";
 import { Label } from "./ui/label";
 import InterestsModal from "./InterestsModal";
 import RelationshipGoalsModal from "./RelationshipGoalsModal";
-import { Plus } from "lucide-react";
+import { Plus, Loader2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { X, Loader2, MapPin } from "lucide-react";
-import ProfileRegistrationModal from "./profileRegistrationSuccessModal";
-import axios from "axios";
-import { useUser } from "@clerk/nextjs";
+import { X, MapPin } from "lucide-react";
 import PhotoUpload from "./PhotoUpload";
 import LocationModal from "./LocationModal";
+import { uploadImagesToCloudinary } from "@/utils/cloudinary";
+import { createProfileAction } from "@/app/actions/profile-registration";
+import { useRouter } from "next/navigation";
 
-// Create a context to share location between components
 interface LocationContextType {
   location: { lat: number; lng: number } | null;
   setLocation: React.Dispatch<
@@ -41,19 +40,22 @@ type FormData = {
   interests: string[];
 };
 
-const RegistrationForm: React.FC = () => {
-  const { user } = useUser();
+type RegistrationFormProps = {
+  userId: string | undefined;
+};
+
+const RegistrationForm: React.FC<RegistrationFormProps> = ({ userId }) => {
+  const router = useRouter();
   const [showGoalsModal, setShowGoalsModal] = useState(false);
   const [showInterestsModal, setShowInterestsModal] = useState(false);
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [selectedGoal, setSelectedGoal] = useState<string>("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(
     null
   );
-  const [error, setError] = useState<string | null>(null);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const {
     register,
@@ -87,70 +89,71 @@ const RegistrationForm: React.FC = () => {
 
   const handleImagesChange = (files: File[]) => {
     setImageFiles(files);
+    setUploadError(null);
   };
 
   const onSubmit = async (data: FormData) => {
-    setIsSubmitting(true);
-    setError(null);
+    setIsUploading(true);
+    setUploadError(null);
 
     try {
-      if (!user?.id) {
-        throw new Error("User is not authenticated");
-      }
+      let imageUrls: string[] = [];
 
-      // Create formatted date from separate inputs
-      const formattedDob = `${data.birthDay}/${data.birthMonth}/${data.birthYear}`;
+      if (imageFiles.length > 0) {
+        const uploadResult = await uploadImagesToCloudinary(
+          imageFiles,
+          "dating-profiles"
+        );
 
-      // Create FormData object to handle file uploads
-      const formData = new FormData();
-      formData.append("clerkId", user.id);
-      formData.append("user_name", data.matchIdentity);
-      formData.append("firstName", data.firstName);
-      formData.append("dob", formattedDob);
-      formData.append("sex", data.sex);
-      formData.append("relationship_goal", data.relationshipGoal);
-
-      // Append each interest separately
-      if (data.interests) {
-        data.interests.forEach((interest) => {
-          formData.append("interests", interest);
-        });
-      }
-
-      // Append location if available
-      if (location) {
-        formData.append("location[latitude]", location.lat.toString());
-        formData.append("location[longitude]", location.lng.toString());
-      }
-
-      // Append each image file
-      imageFiles.forEach((file) => {
-        formData.append("images", file);
-      });
-
-      const response = await axios.post(
-        `http://localhost:4000/api/profiles/?clerkId=${user.id}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+        if (!uploadResult.success) {
+          throw new Error(uploadResult.error || "Failed to upload images");
         }
-      );
 
-      if (response.data.message === "Profile created successfully") {
-        setShowSuccessModal(true);
+        imageUrls = uploadResult.urls || [];
+      }
+
+      const formData = new FormData();
+
+      if (userId) {
+        formData.append("userId", userId);
+      }
+      formData.append("visibility", "everyone");
+      formData.append("userName", data.matchIdentity);
+      formData.append("firstName", data.firstName);
+
+      const dob = new Date(
+        `${data.birthYear}-${data.birthMonth}-${data.birthDay}`
+      );
+      formData.append("dob", dob.toISOString());
+
+      formData.append("sex", data.sex);
+      formData.append("relationshipGoal", data.relationshipGoal);
+
+      if (location) {
+        formData.append("longitude", location.lng.toString());
+        formData.append("latitude", location.lat.toString());
+      }
+
+      formData.append("interests", selectedInterests.join(","));
+
+      if (imageUrls.length > 0) {
+        formData.append("images", imageUrls.join(","));
+      }
+
+      const result = await createProfileAction(formData);
+
+      if (result.success) {
+        router.push("/app");
       } else {
-        setError("An error occurred while updating your profile");
+        setUploadError(result.error || "Failed to create profile");
       }
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        setError(error.response?.data?.message || "Failed to update profile");
-      } else {
-        setError("An unexpected error occurred");
-      }
+      console.error("Form submission error:", error);
+      setUploadError(
+        error instanceof Error ? error.message : "An error occurred"
+      );
     } finally {
-      setIsSubmitting(false);
+      setIsUploading(false);
     }
   };
 
@@ -163,7 +166,6 @@ const RegistrationForm: React.FC = () => {
         <div className="container mx-auto">
           <div className="flex flex-col lg:flex-row gap-8 lg:justify-between">
             <div className="w-full lg:w-[45%] space-y-6">
-              {/* First Name */}
               <div>
                 <Label className="font-outfit font-bold text-base text-[#212121]">
                   Your First Name
@@ -180,7 +182,7 @@ const RegistrationForm: React.FC = () => {
                 )}
               </div>
 
-              {/* Match Identity */}
+              {/* Username */}
               <div>
                 <Label className="font-outfit font-bold text-[#212121]">
                   Your Username
@@ -343,22 +345,23 @@ const RegistrationForm: React.FC = () => {
             </div>
           </div>
 
-          {error && (
+          {/* Upload Error Display */}
+          {uploadError && (
             <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-md text-center">
-              {error}
+              {uploadError}
             </div>
           )}
 
           <div className="mt-8 flex flex-col items-center gap-4">
             <Button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isUploading}
               className="bg-primary px-16 py-6 rounded-full font-outfit font-semibold"
             >
-              {isSubmitting ? (
+              {isUploading ? (
                 <div className="flex items-center gap-2">
                   <Loader2 className="h-5 w-5 animate-spin" />
-                  Updating...
+                  Creating Profile...
                 </div>
               ) : (
                 "Sign Up"
@@ -382,9 +385,7 @@ const RegistrationForm: React.FC = () => {
           isOpen={showInterestsModal}
           onClose={() => setShowInterestsModal(false)}
           onSelect={handleInterestSelect}
-          selectedInterests={selectedInterests}
         />
-        <ProfileRegistrationModal isOpen={showSuccessModal} />
         {!location && (
           <LocationModal locationContext={{ location, setLocation }} />
         )}

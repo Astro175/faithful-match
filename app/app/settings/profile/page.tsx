@@ -18,14 +18,19 @@ const ProfilePage = () => {
     readReceipts: true,
   });
 
-  const handleSwitchChange = (key) => {
+  const handleSwitchChange = (key: keyof typeof switches) => {
     setSwitches((prev) => ({
       ...prev,
       [key]: !prev[key],
     }));
   };
 
-  const SectionHeader = ({ title, onBack }) => (
+  type SectionHeaderProps = {
+    title: string;
+    onBack: () => void;
+  };
+
+  const SectionHeader: React.FC<SectionHeaderProps> = ({ title, onBack }) => (
     <div className="flex items-center mb-6">
       <FaArrowLeftLong className="cursor-pointer" onClick={onBack} />
       <h2 className="ml-10 font-outfit font-bold text-2xl text-foreground">
@@ -34,7 +39,11 @@ const ProfilePage = () => {
     </div>
   );
 
-  const SaveButton = ({ onClick }) => (
+  type SaveButtonProps = {
+    onClick: () => void;
+  };
+
+  const SaveButton: React.FC<SaveButtonProps> = ({ onClick }) => (
     <button
       className="bg-[#DD101E] text-white px-6 py-3 rounded-lg font-outfit font-semibold mt-4"
       onClick={onClick}
@@ -109,7 +118,9 @@ const ProfilePage = () => {
         title="Blocked Users"
         onBack={() => setCurrentView("main")}
       />
-      <p className="text-gray-600 mt-4">You haven't blocked any users yet.</p>
+      <p className="text-gray-600 mt-4">
+        You haven&apos;t blocked any users yet.
+      </p>
     </div>
   );
 
@@ -221,7 +232,11 @@ const ProfilePage = () => {
     }
   };
 
-  const SectionTitle = ({ text }) => (
+  type SectionTitleProps = {
+    text: string;
+  };
+
+  const SectionTitle: React.FC<SectionTitleProps> = ({ text }) => (
     <div className="flex items-center gap-4 mb-6">
       <span className="font-outfit text-sm font-semibold text-[#9E9E9E]">
         {text}
@@ -230,7 +245,12 @@ const ProfilePage = () => {
     </div>
   );
 
-  const NavigationRow = ({ text, onClick }) => (
+  type NavigationRowProps = {
+    text: string;
+    onClick: () => void;
+  };
+
+  const NavigationRow: React.FC<NavigationRowProps> = ({ text, onClick }) => (
     <div
       className="flex justify-between items-center cursor-pointer py-2"
       onClick={onClick}

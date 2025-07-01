@@ -5,13 +5,11 @@ import { Button } from "@/components/ui/button";
 import { CiSearch } from "react-icons/ci";
 import { AiFillStar } from "react-icons/ai";
 import Link from "next/link";
-import { useUserProfile } from "@/hooks/useUserProfile";
-import { useClerk } from "@clerk/nextjs";
 import { ProfileSkeleton } from "./ProfileSkeleton";
+import { useProfile } from "@/store/useUserProfileStore";
 
 export function Navbar() {
-  const { user } = useClerk();
-  const { data: profile } = useUserProfile(user?.id);
+  const profile = useProfile();
 
   return (
     <nav className="flex justify-between items-center px-8 py-16 bg-white border-b-2 border-[#F5F5F5] flex-row-reverse">
@@ -33,14 +31,14 @@ export function Navbar() {
               <>
                 <div className="relative w-10 h-10 rounded-full overflow-hidden">
                   <Image
-                    src={profile.profile_img || "/avatar.png"}
+                    src={profile.images[0].url || "/avatar.png"}
                     alt="Profile"
                     fill
                     className="object-cover"
                   />
                 </div>
                 <div>
-                  <p className="font-medium">@{profile.user_name}</p>
+                  <p className="font-medium">@{profile.userName}</p>
                   <p className="text-sm text-gray-500">Profile</p>
                 </div>
               </>

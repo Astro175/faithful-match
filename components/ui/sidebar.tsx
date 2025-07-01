@@ -5,8 +5,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { ProfileSkeleton } from "./ProfileSkeleton";
-import { useUserProfile } from "@/hooks/useUserProfile";
-import { useClerk } from "@clerk/nextjs";
+import { useProfile } from "@/store/useUserProfileStore";
 
 // Importing inactive icons
 import { RiHome6Line } from "react-icons/ri";
@@ -29,50 +28,49 @@ const menuItems = [
     inactiveIcon: RiHome6Line,
     activeIcon: RiHome6Fill,
     label: "Home",
-    href: "/home",
+    href: "/app",
   },
   {
     inactiveIcon: PiStarFour,
     activeIcon: PiStarFourFill,
     label: "Matches",
-    href: "/matches",
+    href: "/app/matches",
   },
   {
     inactiveIcon: HiOutlineChatBubbleOvalLeftEllipsis,
     activeIcon: HiChatBubbleOvalLeftEllipsis,
     label: "Chats",
-    href: "/home/chat",
+    href: "/app/chat",
   },
   {
     inactiveIcon: IoPersonOutline,
     activeIcon: IoPerson,
     label: "Profile",
-    href: "/home/profile",
+    href: "/app/profile",
   },
   {
     inactiveIcon: GoBell,
     activeIcon: BsBellFill,
     label: "Notifications",
-    href: "/notifications",
+    href: "/app/notifications",
   },
   {
     inactiveIcon: RiFilterLine,
     activeIcon: RiFilterFill,
     label: "Filter",
-    href: "/home/filter",
+    href: "/app/filter",
   },
   {
     inactiveIcon: IoPersonOutline,
     activeIcon: IoPerson,
     label: "Settings",
-    href: "/home/settings",
+    href: "/app/home/settings",
   },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { user } = useClerk();
-  const { data: profile, isLoading, isError } = useUserProfile(user?.id);
+  const profile = useProfile();
 
   return (
     <div className="flex flex-col h-screen w-64 bg-white border-r font-outfit">
@@ -115,27 +113,23 @@ export function Sidebar() {
       <div className="p-6 mt-auto">
         <Link href="/profile">
           <div className="flex items-center gap-3">
-            {isLoading ? (
+            {!profile ? (
               <ProfileSkeleton />
-            ) : isError ? (
-              <div>Error loading profile</div>
             ) : (
-              profile && (
-                <>
-                  <div className="relative w-10 h-10 rounded-full overflow-hidden">
-                    <Image
-                      src={profile.profile_img || "/avatar.png"}
-                      alt="Profile"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div>
-                    <p className="font-medium">@{profile.user_name}</p>
-                    <p className="text-sm text-gray-500">Profile</p>
-                  </div>
-                </>
-              )
+              <>
+                <div className="relative w-10 h-10 rounded-full overflow-hidden">
+                  <Image
+                    src={profile.images[0].url || "/avatar.png"}
+                    alt="Profile"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div>
+                  <p className="font-medium">@{profile.userName}</p>
+                  <p className="text-sm text-gray-500">Profile</p>
+                </div>
+              </>
             )}
           </div>
         </Link>

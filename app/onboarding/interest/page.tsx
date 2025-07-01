@@ -1,14 +1,23 @@
-// app/interests/page.tsx
+// // app/interests/page.tsx
 
-import { Metadata } from "next";
-import InterestsClient from "@/components/ui/onboarding/interest-client";
+// import { Metadata } from "next";
+// import InterestsClient from "@/components/ui/onboarding/interest-client";
 
-export const metadata: Metadata = {
-  title: "Discover your interests",
-  description:
-    "Share your interests, passions, and hobbies. We'll connect you with people who share your enthusiasm.",
-};
+// export const metadata: Metadata = {
+//   title: "Discover your interests",
+//   description:
+//     "Share your interests, passions, and hobbies. We'll connect you with people who share your enthusiasm.",
+// };
 
-export default function InterestsPage() {
-  return <InterestsClient />;
+// export default function InterestsPage() {
+//   return <InterestsClient />;
+// }
+import React from 'react'
+
+export default function page() {
+  return (
+    <div>
+      <h1>Loading</h1>
+    </div>
+  )
 }

@@ -44,8 +44,12 @@ const ThirdPartyIntegration = () => {
       icon: <FaCcVisa size={60} className="text-[#1434CB]" />,
     },
   ];
+  type IntegrationItem = {
+    name: string;
+    icon: React.ReactNode;
+  };
 
-  const CardItem = ({ item }) => (
+  const CardItem = ({ item }: { item: IntegrationItem }) => (
     <div className="flex items-center justify-between border border-[#212121] py-4 pl-5 pr-6 rounded-lg">
       <div className="flex items-center gap-4">
         {item.icon}

@@ -1,6 +1,5 @@
 import { Metadata } from "next";
 import { DesktopHomepage } from "@/components/desktop/DesktopHomepage";
-import { ClientHomepage } from "@/components/ClientHomepage";
 
 export const metadata: Metadata = {
   title: "Faithful Match - Redefine Your Love Life",
@@ -18,5 +17,5 @@ export const metadata: Metadata = {
 };
 
 export default function DesktopHome() {
-  return <ClientHomepage /> ;
+  return <DesktopHomepage /> ;
 }
