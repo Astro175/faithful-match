@@ -50,7 +50,7 @@ export const Footer = ({ className = "" }: FooterProps) => (
           Terms & Conditions
         </Link>
         <Link
-          href="/privacy"
+          href="/policy"
           className="font-outline font-bold text-black hover:text-primary text-center md:text-left"
         >
           Privacy Policy

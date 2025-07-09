@@ -14,14 +14,15 @@ export default async function HomePage() {
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
   const userId = data.user?.id;
-  if (!userId) {
-    redirect("/");
+
+  if (userId) {
+    const profile = await getProfileById(userId);
+    if (!profile) {
+      redirect("/profile-registration");
+    }
+    redirect("/app");
   }
-  const profile = await getProfileById(userId);
-  if (!profile) {
-    redirect("/profile-registration");
-  }
-  redirect("/app");
+
   return (
     <>
       <div className="hidden md:block">
