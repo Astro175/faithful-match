@@ -8,7 +8,6 @@ import { IoMail } from "react-icons/io5";
 import { IoIosLock } from "react-icons/io";
 import Image from "next/image";
 import Link from "next/link";
-import OAuthButtons from "@/components/OauthButtons";
 
 export default function LoginForm() {
   const [loading, setLoading] = useState(false);
@@ -103,11 +102,6 @@ export default function LoginForm() {
             <span className="px-2 bg-white text-[#212121]">OR</span>
           </div>
         </div>
-
-        <OAuthButtons
-          variant="outline"
-          className="w-full py-6 border-[#EEEEEE] rounded-full font-outfit font-semibold"
-        />
 
         <Button
           type="submit"
