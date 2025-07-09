@@ -3,12 +3,24 @@ import { createClient } from "@/utils/supabase/server";
 import { getProfileById } from "@/services/profileService";
 import { redirect } from "next/navigation";
 
-const DesktopHome = dynamic(() => import("./@desktop/page"), {
-  loading: () => <div>Loading</div>,
-});
-const MobileHome = dynamic(() => import("./@mobile/page"), {
-  loading: () => <div>Loading...</div>,
-});
+const DesktopHomepage = dynamic(
+  () =>
+    import("@/components/desktop/DesktopHomepage").then((mod) => ({
+      default: mod.DesktopHomepage,
+    })),
+  {
+    loading: () => <div>Loading</div>,
+  }
+);
+const MobileHomepage = dynamic(
+  () =>
+    import("@/components/mobile/MobileHomepage").then((mod) => ({
+      default: mod.MobileHomepage,
+    })),
+  {
+    loading: () => <div>Loading...</div>,
+  }
+);
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -26,10 +38,10 @@ export default async function HomePage() {
   return (
     <>
       <div className="hidden md:block">
-        <DesktopHome />
+        <DesktopHomepage />
       </div>
       <div className="block md:hidden">
-        <MobileHome />
+        <MobileHomepage />
       </div>
     </>
   );
