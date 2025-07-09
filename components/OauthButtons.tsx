@@ -8,7 +8,7 @@ import Image from "next/image";
 import { Loader2 } from "lucide-react";
 import { FaApple } from "react-icons/fa";
 import { useAuth } from "@clerk/nextjs";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 const providers = [
   {
